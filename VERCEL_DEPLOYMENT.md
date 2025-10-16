@@ -73,21 +73,40 @@ NODE_ENV=production
 ## Belangrijke Configuratie
 
 ### 1. Next.js Config Update
-De [`next.config.mjs`](apps/web/next.config.mjs) moet de CMS URL correct gebruiken:
+De [`next.config.mjs`](apps/web/next.config.mjs) is al geüpdatet met fallbacks:
 
 ```javascript
-// In next.config.mjs
+// In next.config.mjs - environment variables met fallbacks
+if (!process.env.NEXT_PUBLIC_CMS_URL) {
+	process.env.NEXT_PUBLIC_CMS_URL = process.env.NODE_ENV === 'production'
+		? 'https://your-cms-url.vercel.app'
+		: 'http://localhost:1337';
+}
+
 const cspHeader = `
-    frame-ancestors 'self' ${process.env.NEXT_PUBLIC_CMS_URL};
+    frame-ancestors 'self' ${process.env.NEXT_PUBLIC_CMS_URL || 'http://localhost:1337'};
 `;
 ```
 
 ### 2. API Client Configuratie
-Zorg dat de API client de juiste URL gebruikt:
+De [`config.ts`](apps/web/config.ts) is al geüpdatet met fallbacks:
 
 ```typescript
-// In apps/web/utils/api/client.ts
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337/api';
+// In apps/web/config.ts
+export const CMS_BASE_URL = process.env.NEXT_PUBLIC_CMS_URL || 'http://localhost:1337';
+export const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'http://localhost:1337';
+```
+
+### 3. Vercel.json Configuratie
+Er is een [`vercel.json`](vercel.json) bestand toegevoegd:
+
+```json
+{
+  "env": {
+    "NEXT_PUBLIC_CMS_URL": "@cms_url",
+    "NEXT_PUBLIC_IMAGE_BASE_URL": "@cms_url"
+  }
+}
 ```
 
 ## Deployment Proces
@@ -109,6 +128,25 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337/api';
 
 ## Troubleshooting
 
+### Build Fails met "Failed to parse URL from undefined"
+Dit is de meest voorkomende error bij Vercel deployment:
+
+**Error:**
+```
+TypeError: Failed to parse URL from undefined/api/routes
+```
+
+**Oplossing:**
+1. **Zorg dat NEXT_PUBLIC_CMS_URL is ingesteld** in Vercel environment variabelen
+2. **De code is al gefixt** met fallbacks in [`config.ts`](apps/web/config.ts) en [`next.config.mjs`](apps/web/next.config.mjs)
+3. **Herdeploy** na het instellen van de environment variabelen
+
+**Environment variabelen die je MOET instellen in Vercel:**
+```bash
+NEXT_PUBLIC_CMS_URL=https://jouw-cms-url.ondigitalocean.app
+NEXT_PUBLIC_IMAGE_BASE_URL=https://jouw-cms-url.ondigitalocean.app
+```
+
 ### Build Fails
 ```bash
 # Lokale build test
@@ -122,7 +160,7 @@ yarn build
 ### API Connection Errors
 ```bash
 # Test API bereikbaarheid
-curl https://jouw-cms.ondigitalocean.app/health
+curl https://jouw-cms.ondigitalocean.app/api/routes
 
 # Check CORS settings in CMS
 ```
@@ -131,6 +169,7 @@ curl https://jouw-cms.ondigitalocean.app/health
 ```bash
 # Check of variabelen correct zijn ingesteld
 # Moet NEXT_PUBLIC_ prefix hebben voor client-side access
+# Variabelen zijn case-sensitive!
 ```
 
 ## Post-Deployment Checks

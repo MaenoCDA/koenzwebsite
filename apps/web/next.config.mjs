@@ -1,15 +1,29 @@
 import parsed from 'dotenv';
 import withBundleAnalyzer from '@next/bundle-analyzer';
-const envConfig = parsed.config({ path: '../../.env' });
-// Only set env with the NEXT_PUBLIC_ prefix on process.env
-for (const key in envConfig) {
-	if (key.startsWith('NEXT_PUBLIC_')) {
-		process.env[key] = envConfig[key];
+
+// Try to load .env file if it exists, but don't fail if it doesn't
+try {
+	const envConfig = parsed.config({ path: '../../.env' });
+	// Only set env with the NEXT_PUBLIC_ prefix on process.env
+	for (const key in envConfig) {
+		if (key.startsWith('NEXT_PUBLIC_')) {
+			process.env[key] = envConfig[key];
+		}
 	}
+} catch (error) {
+	// .env file doesn't exist or can't be read, which is fine in production
+	console.log('No .env file found, relying on environment variables');
+}
+
+// Set fallback values for required environment variables
+if (!process.env.NEXT_PUBLIC_CMS_URL) {
+	process.env.NEXT_PUBLIC_CMS_URL = process.env.NODE_ENV === 'production'
+		? 'https://your-cms-url.vercel.app'
+		: 'http://localhost:1337';
 }
 
 const cspHeader = `
-    frame-ancestors 'self' ${process.env.NEXT_PUBLIC_CMS_URL};
+    frame-ancestors 'self' ${process.env.NEXT_PUBLIC_CMS_URL || 'http://localhost:1337'};
 `;
 
 const bundleAnalyzer = withBundleAnalyzer({
