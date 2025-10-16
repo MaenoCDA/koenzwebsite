@@ -84,7 +84,7 @@
 		"typescript": "^5.2.2"
 	},
 	"engines": {
-		"node": ">=20.17.0",
+		"node": ">=20.17.0 <=20.x.x",
 		"npm": ">=9.x.x"
 	},
 	"packageManager": "yarn@4.5.3"
