@@ -34,7 +34,7 @@ function addTransformMiddleware(route) {
         },
     ];
 }
-exports.default = {
+const strapiConfig = {
     /**
      * An asynchronous register function that runs before
      * your application is initialized.
@@ -198,5 +198,67 @@ exports.default = {
                 await (0, seeds_1.generateSeedFormData)(strapi);
             }
         }
+    },
+};
+// Add health check endpoint for Render
+exports.default = {
+    ...strapiConfig,
+    // Add health check route
+    async bootstrap({ strapi }) {
+        // Call original bootstrap
+        await strapiConfig.bootstrap({ strapi });
+        // Add health check endpoint
+        strapi.server.routes([
+            {
+                method: 'GET',
+                path: '/health',
+                handler: (ctx) => {
+                    ctx.status = 200;
+                    ctx.body = {
+                        status: 'ok',
+                        timestamp: new Date().toISOString(),
+                        uptime: process.uptime(),
+                        version: strapi.config.info.strapi,
+                        environment: process.env.NODE_ENV
+                    };
+                },
+                config: {
+                    auth: false,
+                    policies: [],
+                    middlewares: [],
+                },
+            },
+        ]);
+    },
+};
+// Add health check endpoint for Render
+exports.default = {
+    ...strapiConfig,
+    // Add health check route
+    async bootstrap({ strapi }) {
+        // Call original bootstrap
+        await strapiConfig.bootstrap({ strapi });
+        // Add health check endpoint
+        strapi.server.routes([
+            {
+                method: 'GET',
+                path: '/health',
+                handler: (ctx) => {
+                    ctx.status = 200;
+                    ctx.body = {
+                        status: 'ok',
+                        timestamp: new Date().toISOString(),
+                        uptime: process.uptime(),
+                        version: strapi.config.info.strapi,
+                        environment: process.env.NODE_ENV
+                    };
+                },
+                config: {
+                    auth: false,
+                    policies: [],
+                    middlewares: [],
+                },
+            },
+        ]);
     },
 };

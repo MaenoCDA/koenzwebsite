@@ -10616,19 +10616,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@strapi/provider-upload-aws-s3@patch:@strapi/provider-upload-aws-s3@npm%3A5.6.0#~/.yarn/patches/@strapi-provider-upload-aws-s3-npm-5.6.0-1b0e01664a.patch":
-  version: 5.6.0
-  resolution: "@strapi/provider-upload-aws-s3@patch:@strapi/provider-upload-aws-s3@npm%3A5.6.0#~/.yarn/patches/@strapi-provider-upload-aws-s3-npm-5.6.0-1b0e01664a.patch::version=5.6.0&hash=8aa83f"
-  dependencies:
-    "@aws-sdk/client-s3": "npm:3.600.0"
-    "@aws-sdk/lib-storage": "npm:3.433.0"
-    "@aws-sdk/s3-request-presigner": "npm:3.433.0"
-    "@aws-sdk/types": "npm:3.433.0"
-    lodash: "npm:4.17.21"
-  checksum: 10c0/206ea2e78783a936d6f0ea9e9679756ec01348f81dd50d358d2fc0ae7b35fc0b19547b3b8452b684313e1223c7eded5ccd237b99733efe52dd23a8716862bbd9
-  languageName: node
-  linkType: hard
-
 "@strapi/provider-upload-local@npm:5.28.0":
   version: 5.28.0
   resolution: "@strapi/provider-upload-local@npm:5.28.0"
@@ -12423,7 +12410,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/minimatch@npm:*":
+"@types/minimatch@npm:*, @types/minimatch@npm:^5.1.2":
   version: 5.1.2
   resolution: "@types/minimatch@npm:5.1.2"
   checksum: 10c0/83cf1c11748891b714e129de0585af4c55dd4c2cafb1f1d5233d79246e5e1e19d1b5ad9e8db449667b3ffa2b6c80125c429dbee1054e9efb45758dbc4e118562
@@ -15023,9 +15010,10 @@ __metadata:
     "@strapi/plugin-seo": "npm:^2.0.4"
     "@strapi/plugin-users-permissions": "npm:5.8.1"
     "@strapi/provider-email-mailgun": "npm:5.8.1"
-    "@strapi/provider-upload-aws-s3": "patch:@strapi/provider-upload-aws-s3@npm%3A5.6.0#~/.yarn/patches/@strapi-provider-upload-aws-s3-npm-5.6.0-1b0e01664a.patch"
+    "@strapi/provider-upload-aws-s3": "npm:5.6.0"
     "@strapi/sdk-plugin": "npm:^5.2.8"
     "@strapi/strapi": "npm:5.8.1"
+    "@types/minimatch": "npm:^5.1.2"
     "@types/node": "npm:^20"
     "@types/pg": "npm:^8"
     "@types/react": "npm:^18"
@@ -15043,7 +15031,7 @@ __metadata:
     sharp: "npm:^0.33.5"
     slugify: "npm:^1.6.6"
     strapi-api-forms: "npm:^0.0.6"
-    strapi-plugin-meilisearch: "patch:strapi-plugin-meilisearch@npm%3A0.13.1#~/.yarn/patches/strapi-plugin-meilisearch-npm-0.13.1-ccc59888c7.patch"
+    strapi-plugin-meilisearch: "npm:0.13.1"
     strapi-v5-plugin-populate-deep: "npm:^4.0.4"
     striptags: "npm:^3.2.0"
     styled-components: "npm:^6.1.13"
@@ -27613,24 +27601,6 @@ __metadata:
     react-router-dom: ^6.26.2
     styled-components: ^6.1.13
   checksum: 10c0/faafb7eb4740ea72e174db50d45d6479e135c8de99ae59b7fcc3fd71cf200cf7fe794719b305e2af83354c02b8b78ed23d1321f270eff0192f6164f10c7f149d
-  languageName: node
-  linkType: hard
-
-"strapi-plugin-meilisearch@patch:strapi-plugin-meilisearch@npm%3A0.13.1#~/.yarn/patches/strapi-plugin-meilisearch-npm-0.13.1-ccc59888c7.patch":
-  version: 0.13.1
-  resolution: "strapi-plugin-meilisearch@patch:strapi-plugin-meilisearch@npm%3A0.13.1#~/.yarn/patches/strapi-plugin-meilisearch-npm-0.13.1-ccc59888c7.patch::version=0.13.1&hash=271980"
-  dependencies:
-    "@strapi/design-system": "npm:^2.0.0-rc.14"
-    "@strapi/icons": "npm:^2.0.0-rc.14"
-    meilisearch: "npm:^0.45.0"
-  peerDependencies:
-    "@strapi/sdk-plugin": ^5.2.7
-    "@strapi/strapi": ^5.4.1
-    react: ^18.3.1
-    react-dom: ^18.3.1
-    react-router-dom: ^6.26.2
-    styled-components: ^6.1.13
-  checksum: 10c0/1d43685f64fa535571138d041bcb3ba1edab268e4054e7cb754ffea58d4b88ea00ae1e1831f7feec689de0065136448c5feb15ad4e6363da06c573566572f7c8
   languageName: node
   linkType: hard
 

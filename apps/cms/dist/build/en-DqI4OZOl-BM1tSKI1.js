@@ -1,1 +1,0 @@
-const e={"video-field.label":"Video","video-field.description":"Video field for YouTube, Vimeo, or Facebook.","video-field.title":"Video url","video-field.placeholder":"eg. https://vimeo.com/123456789","video-field.invalid.url":"Invalid video url"};export{e as default};

@@ -1,1 +1,0 @@
-const e={"video-field.label":"Video","video-field.description":"Pole pre videá z YouTube, Vimea a Facebooku.","video-field.title":"Url videa","video-field.placeholder":"např. https://vimeo.com/123456789","video-field.invalid.url":"Neplatné url videa"};export{e as default};
