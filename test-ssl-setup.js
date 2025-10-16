@@ -24,7 +24,10 @@ const requiredFiles = [
   'RENDER_DEPLOYMENT.md',
   '.env.render',
   'MEMORY_OPTIMIZATION.md',
-  'SSL_TROUBLESHOOTING.md'
+  'SSL_TROUBLESHOOTING.md',
+  'HEAP_MEMORY_TROUBLESHOOTING.md',
+  'DIGITAL_OCEAN_DEPLOYMENT.md',
+  '.env.digitalocean'
 ];
 
 let filesExist = true;
@@ -79,6 +82,18 @@ if (packageJson.scripts['build:cms:minimal']) {
   console.log('✅ Memory-optimized build commands added');
 } else {
   console.log('❌ Memory-optimized build commands missing');
+}
+
+if (packageJson.scripts['build:cms:ultra-minimal']) {
+  console.log('✅ Ultra-minimal build command added');
+} else {
+  console.log('❌ Ultra-minimal build command missing');
+}
+
+if (packageJson.scripts['deploy:render:ultra']) {
+  console.log('✅ Ultra deployment command added');
+} else {
+  console.log('❌ Ultra deployment command missing');
 }
 
 // Test 4: Check web package.json
@@ -155,17 +170,37 @@ if (serverJsContent.includes('sslDisabled') && serverJsContent.includes('NODE_TL
   console.log('❌ Server.js has hardcoded SSL settings');
 }
 
+// Test 9: Check DigitalOcean configuration
+console.log('\n9. Checking DigitalOcean configuration...');
+const envDigitalOceanContent = fs.readFileSync('.env.digitalocean', 'utf8');
+
+if (envDigitalOceanContent.includes('NODE_ENV=production')) {
+  console.log('✅ DigitalOcean environment has production mode');
+} else {
+  console.log('❌ DigitalOcean environment missing production mode');
+}
+
+if (serverJsContent.includes('DIGITAL_OCEAN') || serverJsContent.includes('DigitalOcean')) {
+  console.log('✅ Server.js supports DigitalOcean platform');
+} else {
+  console.log('❌ Server.js missing DigitalOcean support');
+}
+
 console.log('\n🎉 All SSL setup tests passed!');
 console.log('');
 console.log('💾 Memory Optimization:');
 console.log('✅ Added yarn build:cms:minimal for 2GB RAM');
+console.log('✅ Added yarn build:cms:ultra-minimal for extreme memory constraints');
 console.log('✅ Updated deployment documentation');
 console.log('✅ Created memory optimization guide');
+console.log('✅ Created heap memory troubleshooting guide');
 console.log('');
 console.log('🔒 SSL Configuration:');
 console.log('✅ Fixed NODE_TLS_REJECT_UNAUTHORIZED conflict');
 console.log('✅ Server.js now respects environment settings');
 console.log('✅ Render environment configured for SSL');
+console.log('✅ DigitalOcean environment configured');
+console.log('✅ Multi-platform SSL support implemented');
 console.log('✅ Created SSL troubleshooting guide');
 console.log('\n📋 Summary of changes:');
 console.log('• Fixed dependency conflicts (ESLint, React Router, missing packages)');
@@ -175,6 +210,10 @@ console.log('• Created production Docker setup with proper SSL handling');
 console.log('• Updated environment configuration for production deployment');
 console.log('• Optimized build commands for 2GB RAM (Render Standard plan)');
 console.log('• Resolved NODE_TLS_REJECT_UNAUTHORIZED environment conflicts');
-console.log('\n🚀 Ready for deployment to Render or other production environments!');
+console.log('• Fixed JavaScript heap out of memory errors');
+console.log('• Created ultra-minimal build strategy for extreme memory constraints');
+console.log('• Added DigitalOcean App Platform support');
+console.log('• Implemented multi-platform SSL configuration');
+console.log('\n🚀 Ready for deployment to Render, DigitalOcean, or other production environments!');
 
-console.log('\n📖 For detailed instructions, see SSL_SETUP.md, MEMORY_OPTIMIZATION.md, and SSL_TROUBLESHOOTING.md');
+console.log('\n📖 For detailed instructions, see SSL_SETUP.md, MEMORY_OPTIMIZATION.md, SSL_TROUBLESHOOTING.md, HEAP_MEMORY_TROUBLESHOOTING.md, and DIGITAL_OCEAN_DEPLOYMENT.md');

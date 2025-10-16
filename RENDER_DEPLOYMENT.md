@@ -15,13 +15,25 @@ koenz
 ```
 
 ### 2. Build Command (Optimized for 2GB RAM)
+
+**Optie A: Ultra-Minimal (Aanbevolen voor 2GB RAM)**
 ```bash
-corepack enable && yarn install --immutable && yarn build:cms:minimal
+corepack enable && yarn install --immutable && yarn build:cms:ultra-minimal
 ```
 
-**Alternatief voor meer geheugen:**
+**Optie B: Server-Only Build**
 ```bash
-corepack enable && yarn install --immutable && yarn deploy:render
+corepack enable && yarn install --immutable && yarn build:cms:server-only
+```
+
+**Optie C: Met Memory Optimalisatie**
+```bash
+corepack enable && yarn install --immutable && NODE_OPTIONS="--max-old-space-size=1536" yarn build:cms:minimal
+```
+
+**Optie D: Pre-build Lokaal (Beste Functionaliteit)**
+```bash
+corepack enable && yarn install --immutable
 ```
 
 ### 3. Start Command
@@ -59,7 +71,7 @@ WEB_URL=https://jouw-frontend-url
 
 1. **Navigeer naar je Render Web Service settings**
 2. **Stel Root Directory in:** `koenz`
-3. **Update Build Command:** `corepack enable && yarn install --immutable && yarn build:cms:minimal`
+3. **Update Build Command:** `corepack enable && yarn install --immutable && yarn build:cms:ultra-minimal`
 4. **Update Start Command:** `yarn --cwd apps/cms start`
 5. **Voeg Environment Variabelen toe:**
    - `NODE_ENV=production`
@@ -97,9 +109,15 @@ Als de build faalt:
    yarn build:cms:minimal
    ```
 3. **Bij geheugenproblemen (2GB RAM limit):**
-   - Gebruik `yarn build:cms:minimal` in plaats van `yarn build:cms`
-   - Dit bouwt alleen essentiële plugins: link, teaser, en de main app
-   - Slaat collection-types, webhook, en drag-drop plugins over
+   - **Ultra-Minimal**: `yarn build:cms:ultra-minimal` - alleen link plugin
+   - **Server-Only**: `yarn build:cms:server-only` - link + teaser plugins
+   - **Memory Optimalisatie**: `NODE_OPTIONS="--max-old-space-size=1536" yarn build:cms:minimal`
+   - **Pre-build Lokaal**: Bouw lokaal en push dist files
+
+4. **Indien admin panel nodig is:**
+   - Pre-build lokaal en push dist files
+   - Of upgrade naar Render Pro (4GB RAM)
+   - Of gebruik API-only approach
 
 ### Start Fails
 Als de start faalt:
