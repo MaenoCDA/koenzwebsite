@@ -1,11 +1,13 @@
-# Vercel Deployment Guide (Next.js Frontend)
+# Vercel Deployment Guide
 
 ## Overview
-Deploy de Next.js frontend naar Vercel met de Strapi CMS backend op DigitalOcean.
+Dit guide behandelt twee scenario's:
+1. **Frontend deployment** - Next.js frontend naar Vercel met Strapi CMS backend elders
+2. **CMS deployment** - Strapi CMS naar Vercel (alleen voor development/testing)
 
-## Vercel Configuratie
+## Scenario 1: Frontend Deployment (Next.js)
 
-### 1. Project Settings
+### Project Settings
 **In Vercel dashboard:**
 - **Framework Preset**: Next.js ✅ (automatisch gedetecteerd)
 - **Root Directory**: `apps/web` ✅ (automatisch gedetecteerd)
@@ -13,23 +15,65 @@ Deploy de Next.js frontend naar Vercel met de Strapi CMS backend op DigitalOcean
 - **Install Command**: `yarn install`
 - **Output Directory**: Next.js default (.next)
 
-### 2. Environment Variabelen voor Vercel
+### Environment Variabelen voor Frontend
 
-**Essentiële variabelen (kopieer deze):**
+**BELANGRIJK: Deze variabelen MOET je instellen in Vercel dashboard:**
+
+1. Ga naar Vercel dashboard → Your Project → Settings → Environment Variables
+2. Voeg deze variabelen toe:
+
 ```bash
-# API Connection
-NEXT_PUBLIC_CMS_URL=https://jouw-digitalocean-cms.ondigitalocean.app
-NEXT_PUBLIC_API_URL=https://jouw-digitalocean-cms.ondigitalocean.app/api
+# API Connection (VERPLICHT!)
+NEXT_PUBLIC_CMS_URL=https://jouw-cms-domein.ondigitalocean.app
+NEXT_PUBLIC_IMAGE_BASE_URL=https://jouw-cms-domein.ondigitalocean.app
 
 # Environment
 NODE_ENV=production
 
 # Optionele variabelen
-NEXT_PUBLIC_MEILISEARCH_HOST=https://jouw-meilisearch.com
-NEXT_PUBLIC_MEILISEARCH_API_KEY=jouw-api-key
-NEXT_PUBLIC_ALGOLIA_APP_ID=jouw-app-id
-NEXT_PUBLIC_ALGOLIA_SEARCH_KEY=jouw-search-key
+NEXT_PUBLIC_MEILISEARCH_HOST=
+NEXT_PUBLIC_MEILISEARCH_API_KEY=
+NEXT_PUBLIC_ALGOLIA_APP_ID=
+NEXT_PUBLIC_ALGOLIA_SEARCH_KEY=
+NEXT_PUBLIC_SITE_URL=https://jouw-domein.vercel.app
 ```
+
+**🚨 CRUCIAAL:** Zonder `NEXT_PUBLIC_CMS_URL` zal de build falen met "Failed to parse URL from undefined/api/routes"
+
+## Scenario 2: CMS Deployment (Strapi)
+
+### Project Settings
+**In Vercel dashboard:**
+- **Framework Preset**: Other ❌ (geen preset, custom)
+- **Root Directory**: `apps/cms` ✅ (manueel instellen)
+- **Build Command**: `yarn build`
+- **Install Command**: `yarn install`
+- **Output Directory**: `dist` (Strapi default)
+
+### Environment Variabelen voor CMS
+
+**NIET nodig voor CMS deployment:**
+- `NEXT_PUBLIC_CMS_URL` ❌ (dit is alleen voor frontend)
+- `NEXT_PUBLIC_IMAGE_BASE_URL` ❌ (dit is alleen voor frontend)
+
+**Wel nodig voor CMS:**
+```bash
+# Database
+DATABASE_CLIENT=postgres
+DATABASE_URL=postgresql://...
+
+# Secrets
+APP_KEYS=...
+API_TOKEN_SALT=...
+ADMIN_JWT_SECRET=...
+JWT_SECRET=...
+
+# Other CMS settings
+NODE_ENV=production
+URL=https://jouw-cms-vercel-app.vercel.app
+```
+
+**⚠️ LET OP:** CMS op Vercel is alleen geschikt voor development/testing, niet voor productie!
 
 ## Correcte Vercel Setup
 

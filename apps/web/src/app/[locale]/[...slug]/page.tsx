@@ -29,50 +29,65 @@ const HOMEPAGE_UID = 'api::home-page.home-page';
 
 // ~~~~ Start 🚀 generating static routes ~~~~ //
 export async function generateStaticParams(): Promise<StaticParams[]> {
-	const routes = (await getFetchClient().routes('api/routes')) as Routes;
+	// Check if CMS URL is available
+	const { CMS_BASE_URL } = await import('~/config');
+	
+	// If CMS URL is not set to a real URL, return empty static params to avoid build errors
+	if (!CMS_BASE_URL || CMS_BASE_URL === 'http://localhost:1337' || CMS_BASE_URL.includes('your-cms-url')) {
+		console.warn('CMS URL not configured for build, skipping static generation');
+		return [];
+	}
 
-	const staticParams: StaticParams[] = [];
-	for (const locale in routes) {
-		// Use a for...of loop to handle async operations correctly
-		for (const route of routes[locale]) {
-			if (!route.slug || route.uid === HOMEPAGE_UID) {
-				continue; // Skip if there's no slug or if it's the homepage
-			}
+	try {
+		const routes = (await getFetchClient().routes('api/routes')) as Routes;
 
-			if (route.childrenUid) {
-				// Handle overview pages with children UIDs
-				const endpoint = API_ROUTES.get(route.childrenUid) as keyof Endpoints;
-				const pageSize = PAGE_SIZE.get(route.childrenUid) as number;
+		const staticParams: StaticParams[] = [];
+		for (const locale in routes) {
+			// Use a for...of loop to handle async operations correctly
+			for (const route of routes[locale]) {
+				if (!route.slug || route.uid === HOMEPAGE_UID) {
+					continue; // Skip if there's no slug or if it's the homepage
+				}
 
-				// Fetch the first page of data
-				const { meta } = await getOverviewRecordsData(endpoint, {}, pageSize, locale);
+				if (route.childrenUid) {
+					// Handle overview pages with children UIDs
+					const endpoint = API_ROUTES.get(route.childrenUid) as keyof Endpoints;
+					const pageSize = PAGE_SIZE.get(route.childrenUid) as number;
 
-				// Push the static params for the first page
-				staticParams.push({
-					locale,
-					slug: route.route.split('/').filter(Boolean).slice(1),
-					page: 1, // Add page parameter for pagination
-				});
+					// Fetch the first page of data
+					const { meta } = await getOverviewRecordsData(endpoint, {}, pageSize, locale);
 
-				// Optionally: Generate additional static params for paginated pages
-				const totalPages = Math.ceil((meta?.pagination?.total || 0) / pageSize);
-				for (let page = 2; page <= totalPages; page++) {
+					// Push the static params for the first page
 					staticParams.push({
 						locale,
 						slug: route.route.split('/').filter(Boolean).slice(1),
-						page,
+						page: 1, // Add page parameter for pagination
+					});
+
+					// Optionally: Generate additional static params for paginated pages
+					const totalPages = Math.ceil((meta?.pagination?.total || 0) / pageSize);
+					for (let page = 2; page <= totalPages; page++) {
+						staticParams.push({
+							locale,
+							slug: route.route.split('/').filter(Boolean).slice(1),
+							page,
+						});
+					}
+				} else {
+					// Handle normal static routes
+					staticParams.push({
+						locale,
+						slug: route.route.split('/').filter(Boolean).slice(1),
 					});
 				}
-			} else {
-				// Handle normal static routes
-				staticParams.push({
-					locale,
-					slug: route.route.split('/').filter(Boolean).slice(1),
-				});
 			}
 		}
+		return staticParams;
+	} catch (error) {
+		console.error('Error generating static params:', error);
+		// Return empty array to prevent build failure
+		return [];
 	}
-	return staticParams;
 }
 // ~~~~ End 🚀 generating static routes ~~~~ //
 
