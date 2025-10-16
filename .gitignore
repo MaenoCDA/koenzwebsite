@@ -118,6 +118,8 @@ exports
 dist
 !packages/strapi-admin-overrides/*/dist
 apps/cms/src/plugins/*/dist
+!apps/cms/src/plugins/*/dist/
+!apps/cms/src/plugins/*/dist/**
 !apps/cms/strapi-config.tar.gz
 build
 .strapi-updater.json
