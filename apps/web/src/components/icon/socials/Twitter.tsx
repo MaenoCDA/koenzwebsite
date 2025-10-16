@@ -1,0 +1,22 @@
+import { Svg } from '~/types/schemas';
+import { classNamesTailwind } from '~/utils/helpers';
+
+const Twitter = ({ className, width, height }: Svg) => {
+	return (
+		<svg
+			className={classNamesTailwind('fill-current', className)}
+			x="0px"
+			y="0px"
+			width={width ?? 100}
+			height={height ?? 100}
+			viewBox="0 0 24 24"
+		>
+			<path
+				fill="currentColor"
+				d="M 2.3671875 3 L 9.4628906 13.140625 L 2.7402344 21 L 5.3808594 21 L 10.644531 14.830078 L 14.960938 21 L 21.871094 21 L 14.449219 10.375 L 20.740234 3 L 18.140625 3 L 13.271484 8.6875 L 9.2988281 3 L 2.3671875 3 z M 6.2070312 5 L 8.2558594 5 L 18.033203 19 L 16.001953 19 L 6.2070312 5 z"
+			></path>
+		</svg>
+	);
+};
+
+export default Twitter;

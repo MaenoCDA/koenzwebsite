@@ -1,0 +1,84 @@
+{
+	"kind": "singleType",
+	"collectionName": "general_settings",
+	"info": {
+		"singularName": "general-setting",
+		"pluralName": "general-settings",
+		"displayName": "Instellingen",
+		"description": ""
+	},
+	"options": {
+		"draftAndPublish": false
+	},
+	"pluginOptions": {
+		"i18n": {
+			"localized": true
+		}
+	},
+	"attributes": {
+		"logo": {
+			"type": "media",
+			"multiple": false,
+			"required": false,
+			"allowedTypes": ["images", "files"],
+			"pluginOptions": {
+				"i18n": {
+					"localized": true
+				}
+			}
+		},
+		"favicon": {
+			"type": "media",
+			"multiple": false,
+			"required": true,
+			"allowedTypes": ["images"],
+			"pluginOptions": {
+				"i18n": {
+					"localized": false
+				}
+			}
+		},
+		"addresses": {
+			"type": "component",
+			"repeatable": true,
+			"component": "input.address",
+			"required": false,
+			"pluginOptions": {
+				"i18n": {
+					"localized": true
+				}
+			}
+		},
+		"socials": {
+			"type": "component",
+			"repeatable": true,
+			"component": "general.social-media",
+			"required": true,
+			"pluginOptions": {
+				"i18n": {
+					"localized": true
+				}
+			}
+		},
+		"SEO": {
+			"type": "component",
+			"repeatable": false,
+			"component": "shared.global-seo",
+			"required": true,
+			"pluginOptions": {
+				"i18n": {
+					"localized": true
+				}
+			}
+		},
+		"tagline": {
+			"pluginOptions": {
+				"i18n": {
+					"localized": true
+				}
+			},
+			"type": "customField",
+			"customField": "plugin::bold-title-editor.bold-title-editor"
+		}
+	}
+}

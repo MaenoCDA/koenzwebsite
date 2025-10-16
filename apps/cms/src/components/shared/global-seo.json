@@ -1,0 +1,36 @@
+{
+	"collectionName": "components_shared_global_seos",
+	"info": {
+		"displayName": "global SEO"
+	},
+	"options": {},
+	"attributes": {
+		"googleTagManager": {
+			"pluginOptions": {
+				"i18n": {
+					"localized": false
+				}
+			},
+			"type": "string",
+			"required": false,
+			"default": "GTM-"
+		},
+		"affixMetaTitle": {
+			"type": "string",
+			"maxLength": 30
+		},
+		"fallbackMetaTitle": {
+			"type": "string",
+			"maxLength": 60
+		},
+		"fallbackMetaDescription": {
+			"type": "string",
+			"maxLength": 160,
+			"minLength": 50
+		},
+		"fallbackKeywords": {
+			"type": "text",
+			"regex": "[^,]+"
+		}
+	}
+}

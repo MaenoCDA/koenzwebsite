@@ -1,0 +1,13 @@
+{
+  "content-type-teaser.label": "Content-Type Teaser",
+  "content-type-teaser.description": "Voeg teaser toe van bestaande content-types",
+  "content-type-teaser.select": "Selecteer teaser van bestaande content-types",
+  "content-type-teaser.longDescription": "Selecteer je teaser uit alle huidige content-types hieronder. De teasers zullen de gegevens erven van de \"Hero\" van het content-type.",
+  "content-type-teaser.teaser.default": "Terug naar standaard velden",
+  "content-type-teaser.teaser.custom": "Velden aanpassen",
+  "content-type-teaser.teaser.title": "Velden",
+  "content-type-teaser.teaser.description": "Pas de velden aan die getoond moeten worden bij de teaser",
+  "content-type-teaser.teaser.fields.title": "Titel",
+  "content-type-teaser.teaser.fields.description": "Beschrijving",
+  "content-type-teaser.teaser.fields.image": "Afbeelding"
+}

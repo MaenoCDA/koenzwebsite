@@ -1,0 +1,191 @@
+name: 'Setup CMS Server'
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to setup'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      sshUser:
+        description: '[CMS] SSH user to use for CMS (Rootnet projectId)'
+        required: true
+        type: string
+        default: 'foundatio_de'
+
+      sshHost:
+        description: '[CMS] SSH host to use (Rootnet server domainname)'
+        required: true
+        type: string
+        default: 'naval-wolf.sys.rootnet.io'
+
+      databasePassword:
+        description: '[CMS] Database password (Generated on project creation)'
+        required: true
+        type: string
+
+      secretKeyAWS:
+        description: '[CMS] AWS secret key to use (Foundation starter in 1password)'
+        required: false
+        type: string
+      mailgunApiKey:
+        description: '[CMS] Mailgun key to use (Foundation starter in 1password)'
+        required: false
+        type: string
+      meilisearchApiKey:
+        description: '[CMS] Meilisearch key to use (Foundation starter in 1password)'
+        required: false
+        type: string
+      multidomain:
+        description: '[CMS] Multidomain enabled (true/false)'
+        required: true
+        type: string
+        default: 'false'
+      cmsURL:
+        description: '[CMS] Public CMS URL to use (https://cms.example.com)'
+        required: true
+        type: string
+        default: 'https://staging.cms.foundation.ef2.builders'
+      previewURL:
+        description: '[WEB] Public WEB URL for preview (https://staging.web.example.com)'
+        required: true
+        type: string
+        default: 'https://staging.web.ef2.builders'
+      previewSecret:
+        description: '[WEB] Preview secret for preview'
+        required: true
+        type: string
+        default: ''
+
+env:
+  GIT_BRANCH: ${{ github.event.inputs.environment == 'production' && 'origin/main' || 'origin/dev' }}
+
+jobs:
+  create-environment:
+    name: Create environment with variables and secrets
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Generate GH API token
+        id: generate_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: 810325
+          private-key: ${{ secrets.EF2_DEPLOYER_PRIVATE_KEY }}
+
+      - name: Create environment if not exists
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+        run: |
+          gh api --method PUT -H "Accept: application/vnd.github+json" \
+          repos/${{ github.repository }}/environments/${{ inputs.environment }}
+
+      - name: Set DEPLOY variables and secret in environment
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+        run: |
+          gh variable set DEPLOY_SSH_USER --repo ${{ github.repository }} --env ${{ inputs.environment }} --body "${{ inputs.sshUser }}"
+          gh variable set DEPLOY_SSH_HOST --repo ${{ github.repository }} --env ${{ inputs.environment }} --body "${{ inputs.sshHost }}"
+          gh variable set DEPLOY_APP_NAME_PREFIX --repo ${{ github.repository }} --env ${{ inputs.environment }} --body "${{ github.repository }}"
+
+      - name: Set secrets for CMS
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+        run: |
+          for secret in API_TOKEN_SALT ADMIN_JWT_SECRET TRANSFER_TOKEN_SALT JWT_SECRET; do
+            gh secret set ENV_$secret --repo ${{ github.repository }} --env ${{ inputs.environment }} --body $(openssl rand -base64 32)
+          done
+
+          gh secret set ENV_APP_KEYS --repo ${{ github.repository }} --env ${{ inputs.environment }} --body $(openssl rand -base64 32),$(openssl rand -base64 32),$(openssl rand -base64 32)
+
+          ENV_MAILGUN_SECRET_KEY=$(jq -r '.inputs.mailgunApiKey' $GITHUB_EVENT_PATH)
+          gh secret set ENV_MAILGUN_SECRET_KEY --repo ${{ github.repository }} --env ${{ inputs.environment }} --body "$ENV_MAILGUN_SECRET_KEY"
+
+          ENV_MEILISEARCH_API_KEY=$(jq -r '.inputs.meilisearchApiKey' $GITHUB_EVENT_PATH)
+          gh secret set ENV_MEILISEARCH_API_KEY --repo ${{ github.repository }} --env ${{ inputs.environment }} --body "$ENV_MEILISEARCH_API_KEY"
+
+
+          ENV_AWS_ACCESS_SECRET=$(jq -r '.inputs.secretKeyAWS' $GITHUB_EVENT_PATH)
+          gh secret set ENV_AWS_ACCESS_SECRET --repo ${{ github.repository }} --env ${{ inputs.environment }} --body "$ENV_AWS_ACCESS_SECRET"
+
+          ENV_DATABASE_PASSWORD=$(jq -r '.inputs.databasePassword' $GITHUB_EVENT_PATH)
+          gh secret set ENV_DATABASE_PASSWORD --repo ${{ github.repository }} --env ${{ inputs.environment }} --body "$ENV_DATABASE_PASSWORD"
+
+      - name: Set ENV file for CMS
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+        run: |
+          echo "NODE_ENV=${{ inputs.environment }}" >> .env
+          echo "STRAPI_URL=${{ inputs.cmsURL }}" >> .env
+          echo "MULTIDOMAIN_ENABLED=${{ inputs.multidomain }}" >> .env
+          echo "" >> .env
+          echo "DATABASE_CLIENT=mysql" >> .env
+          echo "DATABASE_NAME=${{ inputs.sshUser }}" >> .env
+          echo "DATABASE_USERNAME=${{ inputs.sshUser }}" >> .env
+          echo "DATABASE_SSL=false" >> .env
+          echo "DATABASE_HOST=127.0.0.1" >> .env
+          echo "" >> .env
+          echo "AWS_BUCKET=fndtn-${{ github.event.repository.name }}" >> .env
+          echo "AWS_REGION=eu-central-1" >> .env
+          echo "AWS_ACCESS_KEY_ID=AKIATNVZCUU4KHUKRQVV" >> .env
+          echo "STRAPI_PLUGIN_I18N_INIT_LOCALE_CODE=nl" >> .env
+          echo "STRAPI_DISABLE_UPDATE_NOTIFICATION=true" >> .env
+          echo "STRAPI_DISABLE_REMOTE_DATA_TRANSFER=true" >> .env
+          echo "PREVIEW_SECRET=${{inputs.previewSecret}}" >> .env
+          echo "CLIENT_URL=${{inputs.previewURL}}" >> .env 
+
+          gh variable set ENV_FILE_CMS --repo ${{ github.repository }} --env ${{ inputs.environment }} < .env
+
+  update-environment-variables:
+    uses: ./.github/workflows/update-env-cms.yml
+    needs: create-environment
+    name: 'Update environment variables CMS'
+    secrets: inherit
+    with:
+      environment: ${{ inputs.environment }}
+
+  setup-pm2:
+    name: Setup PM2 on server
+    needs: update-environment-variables
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: 'Setup Node.js v18'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'yarn'
+      - name: Setup SSH key
+        run: |
+          eval `ssh-agent -s`
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-add ~/.ssh/id_rsa
+          ssh-keyscan -t rsa ${{ vars.DEPLOY_SSH_HOST }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Push .nvmrc to server (Node v18)
+        run: |
+          echo "18" > .nvmrc
+          scp -i ~/.ssh/id_rsa .nvmrc ${{ vars.DEPLOY_SSH_USER }}@${{ vars.DEPLOY_SSH_HOST }}:~/.nvmrc
+
+      - name: Run pm2 deploy setup for apps
+        run: yarn dlx pm2 deploy ecosystem.config.js apps setup
+        env:
+          DEPLOY_APP_NAME_PREFIX: ${{ github.event.repository.name }}
+          DEPLOY_SSH_HOST: ${{ vars.DEPLOY_SSH_HOST }}
+          DEPLOY_SSH_USER: ${{ vars.DEPLOY_SSH_USER }}
+          DEPLOY_GIT_REF: ${{ env.GIT_BRANCH }}
+          DEPLOY_GIT_REPO: git@github.com:${{ github.repository }}.git
+          PM2_PLUS_KEYS: ${{ secrets.PM2_PLUS_KEYS }}

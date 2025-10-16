@@ -1,0 +1,27 @@
+{
+	"collectionName": "components_content_texts",
+	"info": {
+		"displayName": "Text",
+		"description": "",
+		"icon": "layer"
+	},
+	"options": {},
+	"attributes": {
+		"paragraph": {
+			"type": "component",
+			"repeatable": false,
+			"component": "layout.paragraph",
+			"required": true
+		},
+		"isColumnView": {
+			"type": "boolean",
+			"required": true,
+			"default": false
+		},
+		"hasBackground": {
+			"type": "boolean",
+			"required": true,
+			"default": false
+		}
+	}
+}

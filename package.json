@@ -1,0 +1,83 @@
+{
+	"name": "project-name",
+	"version": "0.0.1",
+	"private": true,
+	"description": "Project mono repo based on @ef2-digital/foundation",
+	"repository": "github:ef2-digital/foundation",
+	"license": "UNLICENSED",
+	"author": {
+		"name": "EF2 B.V.",
+		"email": "info@ef2.nl",
+		"url": "https://github.com/ef2-digital"
+	},
+	"workspaces": [
+		"apps/*",
+		"apps/cms/src/plugins/*",
+		"cache"
+	],
+	"scripts": {
+		"build": "yarn build:cms && yarn build:web",
+		"build:cms": "yarn build:cms:link && yarn build:cms:teaser && yarn build:cms:collection-types && yarn build:cms:webhook && yarn build:cms:drag-drop-content-types && yarn build:cms:app",
+		"build:cms:app": "yarn workspace cms build",
+		"build:cms:teaser": "yarn workspace content-type-teaser build",
+		"build:cms:link": "yarn workspace link build",
+		"build:cms:webhook": "yarn workspace webhook build",
+		"build:cms:collection-types": "yarn workspace collection-type-select build",
+		"build:cms:drag-drop-content-types": "yarn workspace drag-drop-content-types build",
+		"build:web": "yarn --cwd apps/web build",
+		"develop:cms": "yarn --cwd apps/cms develop",
+		"develop:web": "yarn --cwd apps/web dev",
+		"export:cms": "yarn --cwd apps/cms strapi configuration:dump",
+		"format": "yarn prettier \"**/*.{ts,tsx,js,jsx,md,css,scss,yaml,yml,json}\" --check --write",
+		"format:code": "yarn prettier \"**/*.{ts,tsx,js,jsx}\" --write --log-level warn",
+		"format:other": "yarn prettier \"**/*.{md,css,scss,yaml,yml,json}\" --write --log-level warn",
+		"import:cms": "yarn --cwd apps/cms  strapi configuration:restore -f config/config.json -s replace",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix --cache",
+		"setup": "yarn prepare && yarn postinstall && yarn build:cms && yarn import:cms",
+		"deploy": "yarn build:cms && yarn postinstall",
+		"start": "concurrently yarn:start:'*'",
+		"start:cms": "yarn --cwd apps/cms start",
+		"start:cms:pm2": "yarn pm2 --no-daemon start ecosystem.config.js",
+		"start:web": "yarn --cwd apps/web start",
+		"style": "yarn format && yarn lint",
+		"postinstall": "./scripts/copy_distribution_files.sh",
+		"style:fix": "yarn format && yarn format:code && yarn format:other && yarn lint:fix",
+		"prepare": "husky"
+	},
+	"dependencies": {
+		"better-sqlite3": "^12.2.0",
+		"dotenv": "^16.4.5",
+		"patch-package": "^8.0.0",
+		"pm2": "^5.4.1",
+		"uuid": "^11.0.3"
+	},
+	"devDependencies": {
+		"@eslint/compat": "^1.2.4",
+		"@eslint/eslintrc": "^3.2.0",
+		"@eslint/js": "^9.16.0",
+		"@trivago/prettier-plugin-sort-imports": "^4.3.0",
+		"@typescript-eslint/eslint-plugin": "^8.17.0",
+		"@typescript-eslint/parser": "^8.17.0",
+		"concurrently": "^8.2.2",
+		"eslint": "^9.16.0",
+		"eslint-config-airbnb": "^19.0.4",
+		"eslint-config-next": "15.0.4",
+		"eslint-config-prettier": "^9.0.0",
+		"eslint-import-resolver-typescript": "^3.6.1",
+		"eslint-plugin-import": "^2.29.0",
+		"eslint-plugin-node": "^11.1.0",
+		"eslint-plugin-react": "^7.37.2",
+		"eslint-plugin-tailwindcss": "^3.15.1",
+		"husky": "^9.1.7",
+		"postinstall": "^0.10.3",
+		"prettier": "^3.0.3",
+		"prettier-plugin-tailwindcss": "^0.6.9",
+		"typescript": "^5.2.2"
+	},
+	"engines": {
+		"node": ">=18.x.x",
+		"npm": ">=9.x.x"
+	},
+	"packageManager": "yarn@4.5.3"
+}

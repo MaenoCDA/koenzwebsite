@@ -1,0 +1,59 @@
+name: 'Update environment variables for CMS'
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to setup'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Environment to setup'
+        required: true
+        type: string
+
+jobs:
+  update-envs:
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup SSH key
+        run: |
+          eval `ssh-agent -s`
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-add ~/.ssh/id_rsa
+          ssh-keyscan -t rsa ${{ vars.DEPLOY_SSH_HOST }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Add ENV_FILE to .env file
+        run: |
+          DATETIME=$(date)
+
+          echo "# This file is managed by GitHub Actions. Do not edit manually, last updated $DATETIME by ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> .env
+          echo "" >> .env
+          echo '${{ vars.ENV_FILE_CMS }}' >> .env
+          echo "" >> .env
+          echo "# The following ENVS are secrets, tread them carefully!" >> .env
+          echo "" >> .env
+
+      - name: Add ENV_ secrets to .env file
+        run: |
+          echo '${{ toJson(secrets) }}' >> secrets.json
+          jq -r 'to_entries | map(select(.key|startswith("ENV_"))|"\(.key)=\(.value|tostring)") | .[] | ltrimstr("ENV_")' secrets.json >> .env
+
+      - name: Create cms.bash profile file
+        run: |
+          echo 'while read -r line; do export "$line"; done < <(egrep -v "(^#|^\s|^$)" ~/.env | tr -d "\r\"" )' >> bash.cms
+
+      - name: Push .env & cms.bash files to server
+        run: |
+          scp -i ~/.ssh/id_rsa .env ${{ vars.DEPLOY_SSH_USER }}@${{ vars.DEPLOY_SSH_HOST }}:~/.env
+          scp -i ~/.ssh/id_rsa bash.cms ${{ vars.DEPLOY_SSH_USER }}@${{ vars.DEPLOY_SSH_HOST }}:~/.local/profile.d/cms.bash

@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "@ef2/strapi-plugin-bold-title-editor": {
+      "signature": "5e7f4f4069f6cbfb95b6af586b09e9b6",
+      "link": true,
+      "replaced": "2.0.5"
+    }
+  }
+}

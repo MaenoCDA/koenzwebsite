@@ -1,0 +1,29 @@
+{
+	"collectionName": "components_content_quotes",
+	"info": {
+		"displayName": "Quote",
+		"icon": "quote",
+		"description": ""
+	},
+	"options": {},
+	"attributes": {
+		"quote": {
+			"type": "text",
+			"required": true
+		},
+		"author": {
+			"type": "string",
+			"required": true
+		},
+		"authorDescription": {
+			"type": "string",
+			"required": false
+		},
+		"image": {
+			"allowedTypes": ["images"],
+			"type": "media",
+			"multiple": false,
+			"required": false
+		}
+	}
+}

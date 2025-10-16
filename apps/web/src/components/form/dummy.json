@@ -1,0 +1,154 @@
+{
+	"fields": [
+		{
+			"name": "firstname",
+			"type": "text",
+			"label": "firstname",
+			"placeholder": "",
+			"classnames": {
+				"lg": "col-span-6",
+				"md": "col-span-full",
+				"sm": "col-span-full"
+			},
+			"options": [],
+			"validation": {
+				"required": true
+			}
+		},
+		{
+			"name": "lastname",
+			"type": "text",
+			"label": "last name",
+			"placeholder": "",
+			"classnames": {
+				"lg": "col-span-6",
+				"md": "col-span-full",
+				"sm": "col-span-full"
+			},
+			"options": [],
+			"validation": {}
+		},
+		{
+			"name": "eMailveld",
+			"type": "email",
+			"label": "E-mail veld",
+			"placeholder": "",
+			"classnames": {
+				"lg": "col-span-full",
+				"md": "col-span-full",
+				"sm": "col-span-full"
+			},
+			"options": [],
+			"validation": {}
+		},
+		{
+			"name": "radio",
+			"type": "radio",
+			"label": "radio",
+			"placeholder": "",
+			"classnames": {
+				"lg": "col-span-full",
+				"md": "col-span-full",
+				"sm": "col-span-full"
+			},
+			"options": [
+				{
+					"value": "Ja",
+					"label": "Ja"
+				},
+				{
+					"value": "Nee",
+					"label": "Nee"
+				}
+			],
+			"validation": {
+				"required": true
+			}
+		},
+		{
+			"name": "checkbox",
+			"type": "checkboxgroup",
+			"label": "checkbox",
+			"placeholder": "",
+			"classnames": {
+				"lg": "col-span-full",
+				"md": "col-span-full",
+				"sm": "col-span-full"
+			},
+			"options": [
+				{
+					"value": "1",
+					"label": "1"
+				},
+				{
+					"value": "2",
+					"label": "2"
+				},
+				{
+					"value": "3",
+					"label": "3"
+				}
+			],
+			"validation": {}
+		},
+		{
+			"type": "file",
+			"label": "Upload file",
+			"placeholder": "",
+			"classnames": {
+				"lg": "col-span-full",
+				"md": "col-span-full",
+				"sm": "col-span-full"
+			},
+			"options": [],
+			"validation": {}
+		},
+		{
+			"name": "select",
+			"type": "select",
+			"label": "select",
+			"placeholder": "",
+			"classnames": {
+				"lg": "col-span-full",
+				"md": "col-span-full",
+				"sm": "col-span-full"
+			},
+			"options": [
+				{
+					"value": "1",
+					"label": "1"
+				},
+				{
+					"value": "2",
+					"label": "2"
+				},
+				{
+					"value": "3",
+					"label": "3"
+				},
+				{
+					"value": "4",
+					"label": "4"
+				},
+				{
+					"value": "5",
+					"label": "5"
+				}
+			],
+			"validation": {}
+		},
+		{
+			"name": "textarea",
+			"type": "textarea",
+			"label": "Textarea",
+			"placeholder": "",
+			"classnames": {
+				"lg": "col-span-full",
+				"md": "col-span-full",
+				"sm": "col-span-full"
+			},
+			"options": [],
+			"validation": {}
+		}
+	]
+}

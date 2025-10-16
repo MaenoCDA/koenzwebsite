@@ -1,0 +1,108 @@
+name: 'Deploy WEB and CMS'
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev
+  release:
+    types: [published]
+
+jobs:
+  update-environment-variables:
+    uses: ./.github/workflows/update-env-cms.yml
+    name: 'Update environment variables'
+    secrets: inherit
+    with:
+      environment: ${{ github.ref_type == 'tag' && 'production' || 'staging'}}
+  deploy-cms:
+    name: CMS Deploy to ${{ github.ref_type == 'tag' && 'production' || 'staging'}}
+    needs: update-environment-variables
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_type == 'tag' && 'production' || 'staging'}}
+    steps:
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: 'Setup Node.js v18'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'yarn'
+
+      - name: Setup SSH key
+        run: |
+          eval `ssh-agent -s`
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-add ~/.ssh/id_rsa
+          ssh-keyscan -t rsa ${{ vars.DEPLOY_SSH_HOST }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Deploy CMS (Strapi)
+        run: yarn set version berry && yarn dlx pm2 deploy ecosystem.config.js apps --force
+        env:
+          DEPLOY_APP_NAME_PREFIX: ${{ github.event.repository.name }}
+          DEPLOY_SSH_HOST: ${{ vars.DEPLOY_SSH_HOST }}
+          DEPLOY_SSH_USER: ${{ vars.DEPLOY_SSH_USER }}
+          DEPLOY_GIT_REF: ${{ github.ref_type != 'tag' && 'origin/' || ''}}${{ github.ref_name }}
+          DEPLOY_GIT_REPO: git@github.com:${{ github.repository }}.git
+          PM2_PLUS_KEYS: ${{ secrets.PM2_PLUS_KEYS }}
+      - name: Summarize
+        run: |
+          echo "## `${{ github.ref_type == 'tag' && 'production' || 'staging'}}` has been deployed succesfully :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Actions:" >> $GITHUB_STEP_SUMMARY
+          echo "| [:rewind: Rollback](#) | [:bookmark: Release](${{ github.server_url }}/${{github.repository }}/compare/main...dev) |" >> $GITHUB_STEP_SUMMARY
+          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+  update-environment-variables-web:
+    uses: ./.github/workflows/update-env-web.yml
+    name: 'Update environment variables'
+    needs: deploy-cms
+    secrets: inherit
+    with:
+      environment: ${{ github.ref_type == 'tag' && 'production' || 'staging'}}
+  deploy-web:
+    name: WEB Deploy to ${{ github.ref_type == 'tag' && 'production' || 'staging'}}
+    needs: update-environment-variables-web
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_type == 'tag' && 'production' || 'staging'}}
+    steps:
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: 'Setup Node.js v18'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'yarn'
+
+      - name: Setup SSH key
+        run: |
+          eval `ssh-agent -s`
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.DEPLOY_SSH_WEB_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-add ~/.ssh/id_rsa
+          ssh-keyscan -t rsa ${{ vars.DEPLOY_SSH_WEB_HOST }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Deploy WEB (Next.js)
+        run: |
+          ssh -i ~/.ssh/id_rsa ${{ vars.DEPLOY_SSH_WEB_USER }}@${{ vars.DEPLOY_SSH_WEB_HOST }} << 'EOF'
+          nvm use 18
+          cd ~/public_html 
+             git fetch
+             git checkout ${{ github.ref_type == 'tag' && 'origin/main' || 'origin/dev'}}
+             git pull origin ${{ github.ref_type == 'tag' && 'origin/main' || 'origin/dev'}}
+             source ~/.profile
+             yarn && yarn build:web
+             supervisorctl -c /etc/projects/supervisor/${{vars.DEPLOY_SSH_WEB_USER}}.conf restart all
+          EOF

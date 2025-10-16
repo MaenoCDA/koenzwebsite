@@ -1,0 +1,19 @@
+{
+	"collectionName": "components_teaser_latest_pages",
+	"info": {
+		"displayName": "Latest pages",
+		"icon": "archive"
+	},
+	"options": {},
+	"attributes": {
+		"title": {
+			"type": "string",
+			"default": "Laatste nieuws"
+		},
+		"teasers": {
+			"type": "customField",
+			"optionsSortBy": "publishedAt",
+			"customField": "plugin::collection-type-select.collection-type-select"
+		}
+	}
+}

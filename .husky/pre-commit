@@ -1,0 +1,2 @@
+printf "\033[0;34m~~~ 🚀 Linting code ~~~\033[0m\n"
+yarn style:fix

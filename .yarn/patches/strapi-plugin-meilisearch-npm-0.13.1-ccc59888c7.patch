@@ -1,0 +1,22 @@
+diff --git a/dist/server/index.js b/dist/server/index.js
+index 2d23e08496ab685b5f2c0e4713edab9d977ef495..1c33e1b1181df5a4a8c365ef60e9be05f5033bdd 100644
+--- a/dist/server/index.js
++++ b/dist/server/index.js
+@@ -1813,14 +1813,10 @@ const lifecycleService = ({ strapi: strapi2 }) => {
+         async afterCreate(event) {
+           const { result } = event;
+           const meilisearch2 = strapi2.plugin("meilisearch").service("meilisearch");
+-          const entry = await contentTypeService2.getEntry({
+-            contentType: contentTypeUid,
+-            documentId: result.documentId,
+-            entriesQuery: meilisearch2.entriesQuery({ contentType: contentType2 })
+-          });
+-          meilisearch2.addEntriesToMeilisearch({
++       
++          await meilisearch2.addEntriesToMeilisearch({
+             contentType: contentTypeUid,
+-            entries: [entry]
++            entries: [result]
+           }).catch((e) => {
+             strapi2.log.error(
+               `Meilisearch could not add entry with id: ${result.id}: ${e.message}`

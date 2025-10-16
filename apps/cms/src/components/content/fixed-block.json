@@ -1,0 +1,16 @@
+{
+	"collectionName": "components_content_fixed_blocks",
+	"info": {
+		"displayName": "Fixed block",
+		"icon": "archive",
+		"description": ""
+	},
+	"options": {},
+	"attributes": {
+		"fixed_block_content": {
+			"type": "relation",
+			"relation": "oneToOne",
+			"target": "api::fixed-block.fixed-block"
+		}
+	}
+}

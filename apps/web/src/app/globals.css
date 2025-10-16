@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		/*Figma name: Money green*/
+		--color-primary-50: 210 230 216;
+		--color-primary-500: 0 131 41;
+		--color-primary-700: 10 70 29;
+		--color-primary-800: 6 47 29;
+		--color-primary-900: 4 31 29;
+
+		/* Figma name: Money blue */
+		--color-purple: 56 65 203;
+		--color-purple-50: 155 160 229;
+
+		/*Figma name: Stable blue*/
+		--color-blue-100: 231 231 235;
+		--color-blue-200: 207 207 216;
+		--color-blue-300: 62 65 99;
+		--color-blue-400: 38 41 80;
+		--color-blue-500: 14 17 60;
+
+		/*Figma name: Stable green*/
+		--color-green-100: 230 235 235;
+		--color-green-200: 180 195 194;
+		--color-green-300: 155 175 174;
+		--color-green-400: 130 155 153;
+		--color-green-500: 6 56 52;
+
+		/*Figma name: Stable grey*/
+		--color-grey-100: 245 245 252;
+		--color-grey-500: 220 222 244;
+
+		--color-text: 230 235 235;
+		--color-stroke: 25 68 60;
+	}
+
+	:focus {
+		@apply outline-[0px] outline-transparent;
+	}
+
+	:focus-visible {
+		@apply outline outline-1 outline-offset-2 hocus:outline-offset-4 outline-current transition-all;
+	}
+
+	html {
+		@apply scroll-smooth scroll-p-10 overflow-x-clip;
+	}
+
+	body {
+		@apply relative after:absolute after:inset-0 after:transition-all after:invisible;
+		@apply text-text antialiased bg-primary-900 bg-linear-gradient font-barlow text-base md:text-lg leading-[1.5];
+	}
+
+	&:has(header .dropdown-open) {
+		@apply after:bg-black/20 after:visible;
+	}
+}
+
+h1,
+.virtual-h1 {
+	@apply font-barlow-semi-condensed leading-[0.9] -tracking-[0.1];
+}
+
+h1,
+h2,
+h3,
+h4,
+[class*='virtual-h'] {
+	@apply font-bold leading-[1.1];
+}
+
+h1,
+.virtual-h1 {
+	@apply text-[2.5rem] md:text-[4rem] mb-[0.6em];
+}
+
+h2,
+.virtual-h2 {
+	@apply text-[2.5rem] md:text-[3rem] mb-[0.5em];
+}
+
+h3,
+.virtual-h3 {
+	@apply text-[1.75rem] md:text-[2.25rem] mb-[0.8em];
+}
+
+h4,
+.virtual-h4 {
+	@apply text-xl;
+}
+
+b {
+	@apply relative bg-primary inline-block py-[0.1em] mx-[0.5em] after:bg-primary before:bg-primary;
+
+	&:before,
+	&:after {
+		content: '';
+		mask: url('/images/polygon.svg') no-repeat 50% 50%;
+		mask-size: contain;
+		mask-position: right;
+		display: inline-block;
+		top: 0;
+		right: calc(100% - 1px);
+		height: 100%;
+		width: 1em;
+		min-width: 1em;
+		position: absolute;
+	}
+
+	&:after {
+		right: auto;
+		left: calc(100% - 1px);
+		transform: rotate(180deg);
+	}
+}
+
+.subtitle {
+	@apply text-lg md:text-xl;
+}
+
+.wysiwyg,
+.prose {
+	> * {
+		@apply mb-8;
+	}
+
+	*:last-child {
+		@apply mb-0;
+	}
+
+	a {
+		@apply underline underline-offset-2;
+	}
+
+	ul {
+		@apply list-none font-bold;
+	}
+
+	li {
+		@apply pl-[1.5em] mb-1 relative before:[mask-image:url(/images/check.svg)] before:bg-primary before:size-[1em] before:absolute before:left-0 before:top-[0.25em];
+	}
+}
+
+address {
+	@apply not-italic;
+}
+
+a:not(nav a),
+button {
+	@apply underline underline-offset-2;
+
+	button:not(nav button) {
+		@apply underline underline-offset-2 transition-all;
+	}
+
+	[type='checkbox'],
+	[type='radio'] {
+		@apply appearance-none align-middle select-none bg-origin-border p-0 shrink-0 outline-text;
+	}
+
+	[type='text'],
+	[type='email'],
+	[type='url'],
+	[type='password'],
+	[type='number'],
+	[type='date'],
+	[type='datetime-local'],
+	[type='month'],
+	[type='search'],
+	[type='tel'],
+	[type='time'],
+	[type='week'],
+	[multiple],
+	textarea,
+	select {
+		@apply appearance-none;
+	}
+
+	a {
+		@apply hocus:text-primary transition-all;
+	}
+
+	legend,
+	.legend {
+		@apply block font-medium mb-1;
+	}
+}
+
+@layer utilities {
+	.component-padding {
+		@apply py-12 lg:py-24;
+	}
+
+	.component-margin {
+		@apply my-16 lg:my-24;
+	}
+
+	.container {
+		@apply w-full px-4 mx-auto;
+	}
+
+	.row {
+		@apply grid auto-rows-auto gap-x-5 grid-cols-12;
+	}
+
+	.bg-glass {
+		@apply backdrop-blur-[2px] backdrop-filter bg-white/5;
+	}
+
+	.bg-linear-gradient {
+		@apply from-[#041f1d] from-25% md:from-60% to-[#008329] bg-gradient-122 to-[133%];
+		@apply from-[#041f1d] from-25% md:from-60% to-[#008329] bg-gradient-122 to-[133%];
+	}
+
+	.bordered {
+		@apply border-t border-t-stroke;
+	}
+
+	.button-wrapper {
+		@apply flex flex-wrap mt-8 gap-4;
+	}
+}

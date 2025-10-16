@@ -1,0 +1,28 @@
+{
+	"collectionName": "components_menu_menu_items",
+	"info": {
+		"displayName": "Menu Item",
+		"icon": "bulletList",
+		"description": ""
+	},
+	"options": {},
+	"attributes": {
+		"label": {
+			"type": "string",
+			"required": true
+		},
+		"link": {
+			"type": "customField",
+			"customField": "plugin::link.link",
+			"required": true
+		},
+		"subItems": {
+			"type": "component",
+			"repeatable": true,
+			"component": "menu.sub-menu-item"
+		},
+		"isButton": {
+			"type": "boolean"
+		}
+	}
+}

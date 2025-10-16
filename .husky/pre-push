@@ -1,0 +1,8 @@
+#printf "\033[0;34m~~~ 🚀 Building CMS ~~~\033[0m\n"
+#yarn cms:build
+
+#printf "\033[0;34m~~~ 🚀 Exporting CMS settings ~~~\033[0m\n"
+#yarn export:cms
+
+#printf "\033[0;34m~~~ 🚀 Building Web ~~~\033[0m\n"
+#yarn workspace web:build // TODO: enable if build is working

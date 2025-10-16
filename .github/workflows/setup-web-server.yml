@@ -1,0 +1,145 @@
+name: 'Setup WEB Server'
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to setup'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      cmsURL:
+        description: '[WEB] CMS endpoint to use'
+        required: true
+        type: string
+        default: 'https://staging.cms.foundation.ef2.builders'
+      sshUserWeb:
+        description: '[WEB] SSH user to use for CMS (Rootnet projectId)'
+        required: true
+        type: string
+      sshHostWeb:
+        description: '[WEB] SSH host to use (Rootnet server domainname)'
+        required: true
+        type: string
+        default: 'naval-wolf.sys.rootnet.io'
+      website:
+        description: '[WEB] Website URL to use'
+        required: false
+        type: string
+        default: https://example.com
+      googleMapsApiKey:
+        description: '[WEB] GM key to use (create on Google Cloud console)'
+        required: false
+        type: string
+      strapiPreviewSecretKey:
+        description: '[WEB] Strapi preview secret key to use (create on Strapi)'
+        required: false
+        type: string
+
+env:
+  GIT_BRANCH: ${{ github.event.inputs.environment == 'production' && 'origin/main' || 'origin/dev' }}
+
+jobs:
+  create-environment:
+    name: Create environment with variables and secrets
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Generate GH API token
+        id: generate_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: 810325
+          private-key: ${{ secrets.EF2_DEPLOYER_PRIVATE_KEY }}
+
+      - name: Create environment if not exists
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+        run: |
+          gh api --method PUT -H "Accept: application/vnd.github+json" \
+          repos/${{ github.repository }}/environments/${{ inputs.environment }}
+
+      - name: Set DEPLOY variables and secret in environment
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+        run: |
+          gh variable set DEPLOY_SSH_WEB_USER --repo ${{ github.repository }} --env ${{ inputs.environment }} --body "${{ inputs.sshUserWeb }}"
+          gh variable set DEPLOY_SSH_WEB_HOST --repo ${{ github.repository }} --env ${{ inputs.environment }} --body "${{ inputs.sshHostWeb }}"
+
+      - name: Set ENV file for WEB
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+        run: |
+          echo "NODE_ENV=production" >> .env
+          echo "NEXT_PUBLIC_DEBUG_MODE=false" >> .env
+          echo "NEXT_PUBLIC_CMS_URL=${{ inputs.cmsURL }}" >> .env
+          echo "NEXT_PUBLIC_PREVIEW_SECRET=${{ inputs.strapiPreviewSecretKey }}" >> .env
+          echo "NEXT_PUBLIC_GOOGLE_API_KEY=${{ inputs.googleMapsApiKey }}" >> .env
+          echo "NEXT_PUBLIC_MULTIDOMAIN_ENABLED=false" >> .env
+          echo "NEXT_PUBLIC_SITE_URL=${{ inputs.website }}" >> .env
+          echo "" >> .env
+
+          gh variable set ENV_FILE_WEB --repo ${{ github.repository }} --env ${{ inputs.environment }} < .env
+
+  update-environment-variables:
+    uses: ./.github/workflows/update-env-web.yml
+    needs: create-environment
+    name: 'Update environment variables WEB'
+    secrets: inherit
+    with:
+      environment: ${{ inputs.environment }}
+
+  setup:
+    name: Setup server
+    needs: update-environment-variables
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: 'Setup Node.js v18'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'yarn'
+
+      - name: Setup SSH key
+        run: |
+          eval `ssh-agent -s`
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.DEPLOY_SSH_WEB_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-add ~/.ssh/id_rsa
+          ssh-keyscan -t rsa ${{ vars.DEPLOY_SSH_WEB_HOST }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Push .nvmrc to server (Node v18)
+        run: |
+          echo "18" > .nvmrc
+          scp -i ~/.ssh/id_rsa .nvmrc ${{ vars.DEPLOY_SSH_WEB_USER }}@${{ vars.DEPLOY_SSH_WEB_HOST }}:~/.nvmrc
+      - name: Clone repository and deploy
+        run: |
+          ssh -i ~/.ssh/id_rsa ${{ vars.DEPLOY_SSH_WEB_USER }}@${{ vars.DEPLOY_SSH_WEB_HOST }} << 'EOF'
+          nvm install 18 && nvm use 18 && corepack enable
+          if [ ! -d "~/public_html" ]; then
+              mkdir -p ~/public_html
+            fi
+            cd ~/public_html
+            if [ ! -d ".git" ]; then
+              git clone git@github.com:${{ github.repository }}.git .
+            fi
+            git fetch
+            git checkout ${{ env.GIT_BRANCH }}
+            git pull origin ${{ env.GIT_BRANCH }}
+            source ~/.profile
+            yarn install
+            yarn build:web
+            supervisorctl -c /etc/projects/supervisor/${{ vars.DEPLOY_SSH_WEB_USER }}.conf restart all
+          EOF

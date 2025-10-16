@@ -1,0 +1,17 @@
+services:
+  db:
+    image: mysql
+    container_name: strapi-db
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: strapi
+      MYSQL_DATABASES: strapi_other strapi_another
+      MYSQL_USER: strapi
+      MYSQL_PASSWORD: strapi
+    volumes:
+      - .tmp/mysql:/var/lib/mysql
+      - ./scripts/docker/mysql:/docker-entrypoint-initdb.d
+    ports:
+      - '3306:3306'

@@ -1,0 +1,23 @@
+{
+	"collectionName": "components_shared_resources",
+	"info": {
+		"displayName": "Bronnen",
+		"icon": "book",
+		"description": ""
+	},
+	"options": {},
+	"attributes": {
+		"resources": {
+			"type": "media",
+			"multiple": true,
+			"required": false,
+			"allowedTypes": ["images", "videos", "audios", "files"]
+		},
+		"summary": {
+			"type": "component",
+			"repeatable": false,
+			"component": "layout.paragraph",
+			"required": false
+		}
+	}
+}

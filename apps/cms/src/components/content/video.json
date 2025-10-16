@@ -1,0 +1,25 @@
+{
+	"collectionName": "components_content_videos",
+	"info": {
+		"displayName": "Video embed (youtube / vimeo)",
+		"description": "",
+		"icon": "slideshow"
+	},
+	"options": {},
+	"attributes": {
+		"caption": {
+			"type": "string",
+			"required": true
+		},
+		"placeholder": {
+			"type": "media",
+			"multiple": false,
+			"required": true,
+			"allowedTypes": ["images"]
+		},
+		"video": {
+			"type": "customField",
+			"customField": "plugin::video-field.video"
+		}
+	}
+}

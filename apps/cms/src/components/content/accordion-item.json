@@ -1,0 +1,22 @@
+{
+	"collectionName": "components_content_accordion_items",
+	"info": {
+		"displayName": "Accordion item",
+		"description": ""
+	},
+	"options": {},
+	"attributes": {
+		"title": {
+			"type": "string",
+			"required": true
+		},
+		"text": {
+			"type": "customField",
+			"options": {
+				"preset": "custom"
+			},
+			"required": true,
+			"customField": "plugin::ckeditor5.CKEditor"
+		}
+	}
+}

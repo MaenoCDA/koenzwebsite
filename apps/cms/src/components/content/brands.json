@@ -1,0 +1,17 @@
+{
+	"collectionName": "components_content_brands",
+	"info": {
+		"displayName": "Merken",
+		"description": "",
+		"icon": "§"
+	},
+	"options": {},
+	"attributes": {
+		"logos": {
+			"type": "media",
+			"multiple": true,
+			"required": true,
+			"allowedTypes": ["images"]
+		}
+	}
+}

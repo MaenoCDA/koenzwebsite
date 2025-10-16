@@ -1,0 +1,32 @@
+{
+	"collectionName": "components_hero_texts",
+	"info": {
+		"displayName": "Hero met tekst"
+	},
+	"options": {},
+	"attributes": {
+		"title": {
+			"type": "customField",
+			"customField": "plugin::bold-title-editor.bold-title-editor",
+			"required": true
+		},
+		"subtitle": {
+			"type": "string",
+			"required": false
+		},
+		"text": {
+			"type": "customField",
+			"options": {
+				"preset": "custom"
+			},
+			"required": false,
+			"customField": "plugin::ckeditor5.CKEditor"
+		},
+		"buttons": {
+			"type": "component",
+			"repeatable": true,
+			"component": "input.button",
+			"max": 2
+		}
+	}
+}

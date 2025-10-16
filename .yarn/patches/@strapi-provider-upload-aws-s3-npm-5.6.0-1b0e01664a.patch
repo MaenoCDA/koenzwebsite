@@ -1,0 +1,134 @@
+diff --git a/dist/index.js b/dist/index.js
+index b9fd1551fc6e1faf3ed918148e05b42691b2c9d2..7eedd7335110d2733f020201bf41f2978639a9e5 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -3,6 +3,7 @@ const fp = require("lodash/fp");
+ const clientS3 = require("@aws-sdk/client-s3");
+ const s3RequestPresigner = require("@aws-sdk/s3-request-presigner");
+ const libStorage = require("@aws-sdk/lib-storage");
++const plaiceholder = require("plaiceholder");
+ const ENDPOINT_PATTERN = /^(.+\.)?s3[.-]([a-z0-9-]+)\./;
+ function isUrlFromBucket(fileUrl, bucketName, baseUrl = "") {
+   const url = new URL(fileUrl);
+@@ -13,7 +14,10 @@ function isUrlFromBucket(fileUrl, bucketName, baseUrl = "") {
+   if (bucket) {
+     return bucket === bucketName;
+   }
+-  return url.host.startsWith(`${bucketName}.`) || url.pathname.includes(`/${bucketName}/`);
++  return (
++    url.host.startsWith(`${bucketName}.`) ||
++    url.pathname.includes(`/${bucketName}/`)
++  );
+ }
+ function getBucketFromAwsUrl(fileUrl) {
+   const url = new URL(fileUrl);
+@@ -29,7 +33,9 @@ function getBucketFromAwsUrl(fileUrl) {
+   }
+   const matches = url.host.match(ENDPOINT_PATTERN);
+   if (!matches) {
+-    return { err: `Invalid S3 url: hostname does not appear to be a valid S3 endpoint: ${url}` };
++    return {
++      err: `Invalid S3 url: hostname does not appear to be a valid S3 endpoint: ${url}`,
++    };
+   }
+   const prefix = matches[1];
+   if (!prefix) {
+@@ -51,7 +57,7 @@ const extractCredentials = (options) => {
+   if (options.s3Options?.credentials) {
+     return {
+       accessKeyId: options.s3Options.credentials.accessKeyId,
+-      secretAccessKey: options.s3Options.credentials.secretAccessKey
++      secretAccessKey: options.s3Options.credentials.secretAccessKey,
+     };
+   }
+   return null;
+@@ -69,14 +75,26 @@ const getConfig = ({ baseUrl, rootPath, s3Options, ...legacyS3Options }) => {
+   const config = {
+     ...s3Options,
+     ...legacyS3Options,
+-    ...credentials ? { credentials } : {}
++    ...(credentials ? { credentials } : {}),
+   };
+-  config.params.ACL = fp.getOr(clientS3.ObjectCannedACL.public_read, ["params", "ACL"], config);
++  config.params.ACL = fp.getOr(
++    clientS3.ObjectCannedACL.public_read,
++    ["params", "ACL"],
++    config
++  );
+   return config;
+ };
+ const index = {
+   init({ baseUrl, rootPath, s3Options, ...legacyS3Options }) {
+-    const config = getConfig({ baseUrl, rootPath, s3Options, ...legacyS3Options });
++    strapi.plugin("upload").contentTypes.file.attributes.placeholder = {
++      type: "text",
++    };
++    const config = getConfig({
++      baseUrl,
++      rootPath,
++      s3Options,
++      ...legacyS3Options,
++    });
+     const s3Client = new clientS3.S3Client(config);
+     const filePrefix = rootPath ? `${rootPath.replace(/\/+$/, "")}/` : "";
+     const getFileKey = (file) => {
+@@ -93,8 +111,8 @@ const index = {
+           Body: file.stream || Buffer.from(file.buffer, "binary"),
+           ACL: config.params.ACL,
+           ContentType: file.mime,
+-          ...customParams
+-        }
++          ...customParams,
++        },
+       });
+       const upload2 = await uploadObj.done();
+       if (assertUrlProtocol(upload2.Location)) {
+@@ -102,6 +120,15 @@ const index = {
+       } else {
+         file.url = `https://${upload2.Location}`;
+       }
++      const buffer = await fetch(file.url).then(async (res) =>
++        Buffer.from(await res.arrayBuffer())
++      );
++      if (file.mime.includes("image")) {
++      const { base64 } = await plaiceholder.getPlaiceholder(buffer);
++       
++      if (base64) {
++        file.placeholder = base64;
++      } }
+     };
+     return {
+       isPrivate() {
+@@ -118,10 +145,14 @@ const index = {
+           new clientS3.GetObjectCommand({
+             Bucket: config.params.Bucket,
+             Key: fileKey,
+-            ...customParams
++            ...customParams,
+           }),
+           {
+-            expiresIn: fp.getOr(15 * 60, ["params", "signedUrlExpires"], config)
++            expiresIn: fp.getOr(
++              15 * 60,
++              ["params", "signedUrlExpires"],
++              config
++            ),
+           }
+         );
+         return { url };
+@@ -136,12 +167,12 @@ const index = {
+         const command = new clientS3.DeleteObjectCommand({
+           Bucket: config.params.Bucket,
+           Key: getFileKey(file),
+-          ...customParams
++          ...customParams,
+         });
+         return s3Client.send(command);
+-      }
++      },
+     };
+-  }
++  },
+ };
+ module.exports = index;
+ //# sourceMappingURL=index.js.map

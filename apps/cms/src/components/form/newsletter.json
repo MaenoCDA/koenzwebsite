@@ -1,0 +1,15 @@
+{
+	"collectionName": "components_form_newsletters",
+	"info": {
+		"displayName": "newsletter",
+		"icon": "discuss"
+	},
+	"options": {},
+	"attributes": {
+		"form": {
+			"type": "relation",
+			"relation": "oneToOne",
+			"target": "plugin::api-forms.form"
+		}
+	}
+}
