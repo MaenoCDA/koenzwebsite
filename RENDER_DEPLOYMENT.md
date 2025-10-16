@@ -14,9 +14,14 @@ De huidige deployment faalt omdat:
 koenz
 ```
 
-### 2. Build Command
+### 2. Build Command (Optimized for 2GB RAM)
 ```bash
-corepack enable && yarn install --immutable && yarn build:cms
+corepack enable && yarn install --immutable && yarn build:cms:minimal
+```
+
+**Alternatief voor meer geheugen:**
+```bash
+corepack enable && yarn install --immutable && yarn deploy:render
 ```
 
 ### 3. Start Command
@@ -54,7 +59,7 @@ WEB_URL=https://jouw-frontend-url
 
 1. **Navigeer naar je Render Web Service settings**
 2. **Stel Root Directory in:** `koenz`
-3. **Update Build Command:** `corepack enable && yarn install --immutable && yarn build:cms`
+3. **Update Build Command:** `corepack enable && yarn install --immutable && yarn build:cms:minimal`
 4. **Update Start Command:** `yarn --cwd apps/cms start`
 5. **Voeg Environment Variabelen toe:**
    - `NODE_ENV=production`
@@ -89,8 +94,12 @@ Als de build faalt:
 1. **Controleer of dependencies correct zijn**
 2. **Verifieer dat de CMS build succesvol is:**
    ```bash
-   yarn build:cms
+   yarn build:cms:minimal
    ```
+3. **Bij geheugenproblemen (2GB RAM limit):**
+   - Gebruik `yarn build:cms:minimal` in plaats van `yarn build:cms`
+   - Dit bouwt alleen essentiële plugins: link, teaser, en de main app
+   - Slaat collection-types, webhook, en drag-drop plugins over
 
 ### Start Fails
 Als de start faalt:

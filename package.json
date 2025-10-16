@@ -18,6 +18,7 @@
 	"scripts": {
 		"build": "yarn build:cms && yarn build:web",
 		"build:cms": "yarn build:cms:link && yarn build:cms:teaser && yarn build:cms:collection-types && yarn build:cms:webhook && yarn build:cms:drag-drop-content-types && yarn build:cms:app",
+		"build:cms:minimal": "yarn build:cms:link && yarn build:cms:teaser && yarn build:cms:app",
 		"build:cms:app": "yarn workspace cms build",
 		"build:cms:teaser": "yarn workspace content-type-teaser build",
 		"build:cms:link": "yarn workspace link build",
@@ -35,7 +36,8 @@
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix --cache",
 		"setup": "yarn prepare && yarn postinstall && yarn build:cms && yarn import:cms",
-		"deploy": "yarn build:cms && yarn postinstall",
+		"deploy": "yarn build:cms:minimal && yarn postinstall",
+		"deploy:render": "yarn build:cms:minimal && yarn postinstall",
 		"start": "concurrently yarn:start:'*'",
 		"start:cms": "yarn --cwd apps/cms start",
 		"start:cms:pm2": "yarn pm2 --no-daemon start ecosystem.config.js",

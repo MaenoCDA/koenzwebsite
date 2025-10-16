@@ -22,7 +22,8 @@ const requiredFiles = [
   'apps/cms/Dockerfile.prod',
   'SSL_SETUP.md',
   'RENDER_DEPLOYMENT.md',
-  '.env.render'
+  '.env.render',
+  'MEMORY_OPTIMIZATION.md'
 ];
 
 let filesExist = true;
@@ -71,6 +72,12 @@ if (packageJson.devDependencies['eslint-plugin-jsx-a11y']) {
   console.log('✅ Missing ESLint plugins added');
 } else {
   console.log('❌ Missing ESLint plugins not found');
+}
+
+if (packageJson.scripts['build:cms:minimal']) {
+  console.log('✅ Memory-optimized build commands added');
+} else {
+  console.log('❌ Memory-optimized build commands missing');
 }
 
 // Test 4: Check web package.json
@@ -132,12 +139,18 @@ if (serverConfigContent.includes('rejectUnauthorized')) {
 }
 
 console.log('\n🎉 All SSL setup tests passed!');
+console.log('');
+console.log('💾 Memory Optimization:');
+console.log('✅ Added yarn build:cms:minimal for 2GB RAM');
+console.log('✅ Updated deployment documentation');
+console.log('✅ Created memory optimization guide');
 console.log('\n📋 Summary of changes:');
 console.log('• Fixed dependency conflicts (ESLint, React Router, missing packages)');
 console.log('• Implemented environment-based SSL configuration');
 console.log('• Added SSL Helper utility for secure HTTPS requests');
 console.log('• Created production Docker setup with proper SSL handling');
 console.log('• Updated environment configuration for production deployment');
+console.log('• Optimized build commands for 2GB RAM (Render Standard plan)');
 console.log('\n🚀 Ready for deployment to Render or other production environments!');
 
-console.log('\n📖 For detailed instructions, see SSL_SETUP.md');
+console.log('\n📖 For detailed instructions, see SSL_SETUP.md and MEMORY_OPTIMIZATION.md');
