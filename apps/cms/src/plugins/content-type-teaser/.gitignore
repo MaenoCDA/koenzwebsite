@@ -101,6 +101,8 @@ public/uploads/*
 
 dist
 build
+!dist/
+!dist/**
 
 
 ############################

@@ -16,7 +16,7 @@ export default {
     app.customFields.register({
       name: 'content-type-teaser',
       pluginId: 'content-type-teaser',
-      type: 'string',
+      type: 'json',
       intlLabel: {
         id: 'content-type-teaser.label',
         defaultMessage: 'Content Type Teaser',
