@@ -9,6 +9,6 @@ export default ({ env }) => ({
 		populateRelations: env.bool('WEBHOOKS_POPULATE_RELATIONS', false),
 	},
 	http: {
-		rejectUnauthorized: env.bool('NODE_TLS_REJECT_UNAUTHORIZED', true) === false ? false : true,
+		rejectUnauthorized: false,
 	},
 });
