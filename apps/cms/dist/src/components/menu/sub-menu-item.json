@@ -1,0 +1,23 @@
+{
+    "collectionName": "components_menu_sub_menu_items",
+    "info": {
+        "displayName": "Sub menu item",
+        "icon": "layer"
+    },
+    "options": {},
+    "attributes": {
+        "label": {
+            "type": "string",
+            "required": true
+        },
+        "link": {
+            "type": "customField",
+            "customField": "plugin::link.link"
+        },
+        "subItems": {
+            "type": "component",
+            "repeatable": true,
+            "component": "menu.sub-sub-menu-item"
+        }
+    }
+}

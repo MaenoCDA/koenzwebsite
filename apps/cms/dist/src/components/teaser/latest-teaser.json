@@ -1,0 +1,35 @@
+{
+    "collectionName": "components_teaser_latest_teasers",
+    "info": {
+        "displayName": "Teasers van recente berichten",
+        "icon": "calendar",
+        "description": "Laatste Teasers"
+    },
+    "options": {},
+    "attributes": {
+        "heading": {
+            "type": "component",
+            "repeatable": false,
+            "component": "layout.heading"
+        },
+        "text": {
+            "type": "customField",
+            "options": {
+                "preset": "custom"
+            },
+            "required": false,
+            "customField": "plugin::ckeditor5.CKEditor"
+        },
+        "latestTeasers": {
+            "type": "customField",
+            "optionsRestrict": "id",
+            "customField": "plugin::collection-type-select.collection-type-select",
+            "optionsSortBy": "id"
+        },
+        "button": {
+            "type": "component",
+            "repeatable": false,
+            "component": "input.button"
+        }
+    }
+}

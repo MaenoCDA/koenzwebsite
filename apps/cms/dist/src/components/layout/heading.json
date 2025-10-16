@@ -1,0 +1,25 @@
+{
+    "collectionName": "components_layout_headings",
+    "info": {
+        "displayName": "Heading",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "title": {
+            "type": "customField",
+            "customField": "plugin::bold-title-editor.bold-title-editor",
+            "required": true
+        },
+        "subtitle": {
+            "type": "string",
+            "required": false
+        },
+        "type": {
+            "type": "enumeration",
+            "enum": ["h1", "h2", "h3", "h4"],
+            "default": "h2",
+            "required": true
+        }
+    }
+}

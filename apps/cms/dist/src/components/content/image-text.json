@@ -1,0 +1,28 @@
+{
+    "collectionName": "components_content_image-texts",
+    "info": {
+        "displayName": "Image and text",
+        "description": "",
+        "icon": "layout"
+    },
+    "options": {},
+    "attributes": {
+        "image": {
+            "type": "media",
+            "multiple": false,
+            "required": true,
+            "allowedTypes": ["images"]
+        },
+        "paragraph": {
+            "type": "component",
+            "repeatable": false,
+            "component": "layout.paragraph",
+            "required": true
+        },
+        "textLeft": {
+            "type": "boolean",
+            "required": true,
+            "default": false
+        }
+    }
+}

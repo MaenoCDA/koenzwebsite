@@ -1,0 +1,22 @@
+{
+    "collectionName": "components_content_forms",
+    "info": {
+        "displayName": "Form",
+        "icon": "envelop",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "formParagraph": {
+            "type": "component",
+            "repeatable": false,
+            "component": "layout.paragraph",
+            "required": false
+        },
+        "form": {
+            "type": "relation",
+            "relation": "oneToOne",
+            "target": "plugin::api-forms.form"
+        }
+    }
+}

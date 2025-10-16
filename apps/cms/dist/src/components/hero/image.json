@@ -1,0 +1,39 @@
+{
+    "collectionName": "components_hero_images",
+    "info": {
+        "displayName": "Hero met optionele afbeelding of video",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "title": {
+            "type": "customField",
+            "customField": "plugin::bold-title-editor.bold-title-editor",
+            "required": true
+        },
+        "subtitle": {
+            "type": "string",
+            "required": false
+        },
+        "image": {
+            "type": "media",
+            "multiple": false,
+            "required": false,
+            "allowedTypes": ["images", "videos"]
+        },
+        "text": {
+            "type": "customField",
+            "options": {
+                "preset": "custom"
+            },
+            "required": false,
+            "customField": "plugin::ckeditor5.CKEditor"
+        },
+        "buttons": {
+            "type": "component",
+            "repeatable": true,
+            "component": "input.button",
+            "max": 2
+        }
+    }
+}

@@ -1,0 +1,18 @@
+{
+    "collectionName": "components_general_social_medias",
+    "info": {
+        "displayName": "Social media",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "channel": {
+            "type": "enumeration",
+            "enum": ["discord", "facebook", "instagram", "linkedin", "telegram", "tiktok", "twitter", "youtube"]
+        },
+        "url": {
+            "type": "string",
+            "required": true
+        }
+    }
+}

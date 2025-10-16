@@ -1,0 +1,19 @@
+{
+    "collectionName": "components_input_buttons",
+    "info": {
+        "displayName": "Button",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "label": {
+            "type": "string",
+            "required": true
+        },
+        "link": {
+            "type": "customField",
+            "customField": "plugin::link.link",
+            "required": true
+        }
+    }
+}

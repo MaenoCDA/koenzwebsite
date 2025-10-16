@@ -1,0 +1,18 @@
+{
+    "collectionName": "components_teaser_content_type_teasers",
+    "info": {
+        "displayName": "contentTypeTeasers",
+        "icon": "link",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "teaser": {
+            "type": "customField",
+            "customField": "plugin::content-type-teaser.content-type-teaser"
+        },
+        "title": {
+            "type": "string"
+        }
+    }
+}

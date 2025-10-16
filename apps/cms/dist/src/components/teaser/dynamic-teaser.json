@@ -1,0 +1,36 @@
+{
+    "collectionName": "components_teaser_dynamic_teasers",
+    "info": {
+        "displayName": "Dynamische teasers",
+        "icon": "database",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "heading": {
+            "type": "component",
+            "repeatable": false,
+            "component": "layout.heading"
+        },
+        "text": {
+            "type": "customField",
+            "options": {
+                "preset": "custom"
+            },
+            "required": false,
+            "customField": "plugin::ckeditor5.CKEditor"
+        },
+        "dynamicTeasers": {
+            "displayName": "contentTypeTeasers",
+            "type": "component",
+            "repeatable": true,
+            "component": "teaser.content-type-teasers",
+            "min": 1
+        },
+        "button": {
+            "type": "component",
+            "repeatable": false,
+            "component": "input.button"
+        }
+    }
+}

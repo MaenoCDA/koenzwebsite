@@ -1,0 +1,23 @@
+{
+    "collectionName": "components_content_cta",
+    "info": {
+        "displayName": "CTA blok",
+        "description": "",
+        "icon": "cursor"
+    },
+    "options": {},
+    "attributes": {
+        "image": {
+            "type": "media",
+            "multiple": false,
+            "required": true,
+            "allowedTypes": ["images"]
+        },
+        "ctaBlock": {
+            "type": "component",
+            "repeatable": false,
+            "component": "layout.paragraph",
+            "required": true
+        }
+    }
+}
