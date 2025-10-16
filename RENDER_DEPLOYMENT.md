@@ -34,7 +34,7 @@ yarn --cwd apps/cms start
 **Essentiële variabelen:**
 ```
 NODE_ENV=production
-NODE_TLS_REJECT_UNAUTHORIZED=true
+NODE_TLS_REJECT_UNAUTHORIZED=0
 HOST=0.0.0.0
 PORT=1337
 ```
@@ -63,7 +63,7 @@ WEB_URL=https://jouw-frontend-url
 4. **Update Start Command:** `yarn --cwd apps/cms start`
 5. **Voeg Environment Variabelen toe:**
    - `NODE_ENV=production`
-   - `NODE_TLS_REJECT_UNAUTHORIZED=true`
+   - `NODE_TLS_REJECT_UNAUTHORIZED=0`
    - `HOST=0.0.0.0`
    - `PORT=1337`
 6. **Save en Redeploy**
@@ -82,7 +82,7 @@ Als je nog steeds "self-signed certificate" errors krijgt:
 
 1. **Controleer environment variabelen:**
    - `NODE_ENV=production`
-   - `NODE_TLS_REJECT_UNAUTHORIZED=true`
+   - `NODE_TLS_REJECT_UNAUTHORIZED=0`
 
 2. **Controleer database connectie** (indien extern):
    - Zorg dat de database SSL certificaten correct zijn
@@ -119,7 +119,7 @@ NODE_TLS_REJECT_UNAUTHORIZED=0
 ### Production (Render)
 ```bash
 NODE_ENV=production
-NODE_TLS_REJECT_UNAUTHORIZED=true
+NODE_TLS_REJECT_UNAUTHORIZED=0
 ```
 
 De nieuwe configuratie zorgt ervoor dat:
