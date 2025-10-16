@@ -1,0 +1,8 @@
+const nl = {
+  "collection-type-select.title": "Selecteer de nieuwste teasers vanuit een content-type",
+  "collection-type-select.description": "Selecteer hier het content-type welke getoond wordt met daarbij het aantal teasers",
+  "collection-type-select.quantity": "Aantal teasers"
+};
+export {
+  nl as default
+};
