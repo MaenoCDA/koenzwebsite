@@ -1,0 +1,1 @@
+const e={"field.title":"Bold Title Editor","field.description":"A bold title/text editor to accent certain parts","field.required-field":"Required field"};export{e as default};

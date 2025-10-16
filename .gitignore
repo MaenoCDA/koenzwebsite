@@ -160,3 +160,7 @@ build
 
 .eslintcache
 delete_workflow_runs.sh
+
+# voeg helemaal onderaan .gitignore toe
+!apps/cms/build/
+!apps/cms/build/**
