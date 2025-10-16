@@ -167,3 +167,6 @@ delete_workflow_runs.sh
 
 !apps/cms/dist/
 !apps/cms/dist/**
+
+!apps/cms/public/uploads/
+!apps/cms/public/uploads/**
