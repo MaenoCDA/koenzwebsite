@@ -53,7 +53,9 @@ const createSortParams = (sortObject: Record<string, string>): string => {
 
 const getFetchClient = (): FetchClient => {
 	const routes = async <R = Api['Get']['api/routes']>(path: Path<string>, params?: string): Promise<R> => {
-		return fetch(`${CMS_BASE_URL}/${path}${params ? `?${params}` : ''}`, {
+		// Remove any trailing slashes from CMS_BASE_URL to avoid double slashes
+		const baseUrl = CMS_BASE_URL?.replace(/\/+$/, '') || 'http://localhost:1337';
+		return fetch(`${baseUrl}/${path}${params ? `?${params}` : ''}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -88,9 +90,11 @@ const getFetchClient = (): FetchClient => {
 		}
 
 		const deepPopulate = deep ? '?pLevel' : populate ? `?${qs.stringify(populate)}` : '?';
+		// Remove any trailing slashes from CMS_BASE_URL to avoid double slashes
+		const baseUrl = CMS_BASE_URL?.replace(/\/+$/, '') || 'http://localhost:1337';
 
 		return fetch(
-			`${CMS_BASE_URL}/${path}${deepPopulate}${currentPage !== undefined ? `&pagination[page]=${currentPage ?? 1}&pagination[pageSize]=${pageSize ?? 10}` : ''}${searchParams ? `&${searchParams}${sortParams ? `&${sortParams}` : ''}` : ''}${useTimeStamp ? `&timestamp=${timestamp}` : ''}`,
+			`${baseUrl}/${path}${deepPopulate}${currentPage !== undefined ? `&pagination[page]=${currentPage ?? 1}&pagination[pageSize]=${pageSize ?? 10}` : ''}${searchParams ? `&${searchParams}${sortParams ? `&${sortParams}` : ''}` : ''}${useTimeStamp ? `&timestamp=${timestamp}` : ''}`,
 			fetchParams
 		)
 			.then(handleResponse<R>)
