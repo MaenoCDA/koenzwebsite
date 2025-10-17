@@ -1,1 +1,0 @@
-import{gK as s,gL as c,r as o}from"./strapi-BzDuHlVM.js";function u(t){const e=s().getMonitor(),[a,r]=c(e,t);return o.useEffect(()=>e.subscribeToOffsetChange(r)),o.useEffect(()=>e.subscribeToStateChange(r)),a}export{u};
