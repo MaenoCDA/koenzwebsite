@@ -24,14 +24,14 @@ const traverseAndFormatSteps = (data) => {
 };
 
 const TransformFormConfig = async (strapi, ctx) => {
-	const { body, request } = ctx;
-	const { data } = body;
+	const { request } = ctx;
+	const body = ctx.body;
 
-	if (!data || !data.length || !request.query) {
+	if (!body || !Array.isArray(body.data) || !body.data.length || !request?.query) {
 		return;
 	}
 
-	traverseAndFormatSteps(data);
+	traverseAndFormatSteps(body.data);
 };
 
 const widthClassMap = {

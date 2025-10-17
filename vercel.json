@@ -1,16 +1,18 @@
 {
   "version": 2,
-  "buildCommand": "yarn build:web",
+  "buildCommand": "corepack enable && yarn --cwd apps/web build",
   "outputDirectory": "apps/web/.next",
-  "installCommand": "yarn install",
+  "installCommand": "corepack enable && yarn install --check-cache",
   "framework": "nextjs",
+  "env": {
+    "NODE_VERSION": "20.17.0"
+  },
   "builds": [
     {
       "src": "apps/web/package.json",
       "use": "@vercel/next",
       "config": {
-        "maxDuration": 60,
-        "nodeVersion": "20.x"
+        "maxDuration": 60
       }
     }
   ],
