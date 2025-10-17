@@ -1,11 +1,13 @@
 {
   "version": 2,
+  "buildCommand": "yarn build:cms:minimal",
+  "installCommand": "yarn install",
   "builds": [
     {
       "src": "server.js",
       "use": "@vercel/node",
       "config": {
-        "maxDuration": 30,
+        "maxDuration": 60,
         "runtime": "nodejs20.x"
       }
     }
@@ -17,6 +19,14 @@
     }
   ],
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "HOST": "0.0.0.0",
+    "PORT": "1337",
+    "DATABASE_CLIENT": "postgres",
+    "DATABASE_SSL": "true",
+    "DATABASE_URL": "postgresql://koenz_database_user:tsr6Wm1AqQhAgbF72baR89cZvbIWpueD@dpg-d3o9lrmr433s739tj4qg-a/koenz_database",
+    "NODE_TLS_REJECT_UNAUTHORIZED": "0",
+    "ADMIN_JWT_SECRET": "339d78780305c9f658886253cecee22f",
+    "JWT_SECRET": "11684d92a9734b8f7eb705908c42c011"
   }
 }

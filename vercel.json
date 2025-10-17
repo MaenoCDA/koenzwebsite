@@ -1,9 +1,17 @@
 {
   "version": 2,
+  "buildCommand": "yarn build:web",
+  "outputDirectory": "apps/web/.next",
+  "installCommand": "yarn install",
+  "framework": "nextjs",
   "builds": [
     {
       "src": "apps/web/package.json",
-      "use": "@vercel/next"
+      "use": "@vercel/next",
+      "config": {
+        "maxDuration": 60,
+        "nodeVersion": "20.x"
+      }
     }
   ],
   "routes": [
@@ -11,15 +19,5 @@
       "src": "/(.*)",
       "dest": "apps/web/$1"
     }
-  ],
-  "env": {
-    "NEXT_PUBLIC_CMS_URL": "@cms_url",
-    "NEXT_PUBLIC_IMAGE_BASE_URL": "@cms_url"
-  },
-  "build": {
-    "env": {
-      "NEXT_PUBLIC_CMS_URL": "@cms_url",
-      "NEXT_PUBLIC_IMAGE_BASE_URL": "@cms_url"
-    }
-  }
+  ]
 }

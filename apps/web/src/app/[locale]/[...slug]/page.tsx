@@ -38,8 +38,22 @@ export async function generateStaticParams(): Promise<StaticParams[]> {
 		return [];
 	}
 
+	// Check if we're in build mode and CMS is localhost
+	const isBuildTime = process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_CMS_URL?.includes('localhost');
+	const isLocalhost = CMS_BASE_URL.includes('localhost') || CMS_BASE_URL.includes('127.0.0.1');
+	
+	if (isBuildTime && isLocalhost) {
+		console.warn('Skipping static params generation during build time with localhost CMS');
+		return [];
+	}
+
 	try {
 		const routes = (await getFetchClient().routes('api/routes')) as Routes;
+
+		if (!routes || typeof routes !== 'object') {
+			console.warn('No valid routes data received');
+			return [];
+		}
 
 		const staticParams: StaticParams[] = [];
 		for (const locale in routes) {
@@ -51,27 +65,33 @@ export async function generateStaticParams(): Promise<StaticParams[]> {
 
 				if (route.childrenUid) {
 					// Handle overview pages with children UIDs
-					const endpoint = API_ROUTES.get(route.childrenUid) as keyof Endpoints;
-					const pageSize = PAGE_SIZE.get(route.childrenUid) as number;
+					const endpoint = API_ROUTES.get(route.childrenUid as any) as keyof Endpoints;
+					const pageSize = PAGE_SIZE.get(route.childrenUid as any) as number;
 
-					// Fetch the first page of data
-					const { meta } = await getOverviewRecordsData(endpoint, {}, pageSize, locale);
+					try {
+						// Fetch the first page of data
+						const { meta } = await getOverviewRecordsData(endpoint, {}, pageSize, locale);
 
-					// Push the static params for the first page
-					staticParams.push({
-						locale,
-						slug: route.route.split('/').filter(Boolean).slice(1),
-						page: 1, // Add page parameter for pagination
-					});
-
-					// Optionally: Generate additional static params for paginated pages
-					const totalPages = Math.ceil((meta?.pagination?.total || 0) / pageSize);
-					for (let page = 2; page <= totalPages; page++) {
+						// Push the static params for the first page
 						staticParams.push({
 							locale,
 							slug: route.route.split('/').filter(Boolean).slice(1),
-							page,
+							page: 1, // Add page parameter for pagination
 						});
+
+						// Optionally: Generate additional static params for paginated pages
+						const totalPages = Math.ceil((meta?.pagination?.total || 0) / pageSize);
+						for (let page = 2; page <= totalPages; page++) {
+							staticParams.push({
+								locale,
+								slug: route.route.split('/').filter(Boolean).slice(1),
+								page,
+							});
+						}
+					} catch (error) {
+						console.warn(`Failed to generate static params for route ${route.route}:`, error);
+						// Continue with other routes instead of failing completely
+						continue;
 					}
 				} else {
 					// Handle normal static routes

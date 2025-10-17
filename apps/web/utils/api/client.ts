@@ -55,6 +55,16 @@ const getFetchClient = (): FetchClient => {
 	const routes = async <R = Api['Get']['api/routes']>(path: Path<string>, params?: string): Promise<R> => {
 		// Remove any trailing slashes from CMS_BASE_URL to avoid double slashes
 		const baseUrl = CMS_BASE_URL?.replace(/\/+$/, '') || 'http://localhost:1337';
+		
+		// Check if we're in build mode and CMS is localhost
+		const isBuildTime = process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_CMS_URL?.includes('localhost');
+		const isLocalhost = baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1');
+		
+		if (isBuildTime && isLocalhost) {
+			console.warn(`Skipping API call to ${baseUrl}/${path} during build time`);
+			return {} as R; // Return empty object to prevent build failures
+		}
+		
 		return fetch(`${baseUrl}/${path}${params ? `?${params}` : ''}`, {
 			method: 'GET',
 			headers: {
@@ -63,7 +73,14 @@ const getFetchClient = (): FetchClient => {
 			next: { tags: ['routes'] },
 		})
 			.then(handleResponse<R>)
-			.catch(handleError);
+			.catch((error) => {
+				// During build time, return empty object instead of failing
+				if (isBuildTime) {
+					console.warn(`API call failed during build: ${baseUrl}/${path}`, error);
+					return {} as R;
+				}
+				return handleError(error);
+			});
 	};
 
 	const get = async <T extends keyof Api['Get'], R = Api['Get'][T]>(
@@ -92,13 +109,29 @@ const getFetchClient = (): FetchClient => {
 		const deepPopulate = deep ? '?pLevel' : populate ? `?${qs.stringify(populate)}` : '?';
 		// Remove any trailing slashes from CMS_BASE_URL to avoid double slashes
 		const baseUrl = CMS_BASE_URL?.replace(/\/+$/, '') || 'http://localhost:1337';
+		
+		// Check if we're in build mode and CMS is localhost
+		const isBuildTime = process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_CMS_URL?.includes('localhost');
+		const isLocalhost = baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1');
+		
+		if (isBuildTime && isLocalhost) {
+			console.warn(`Skipping API call to ${baseUrl}/${path} during build time`);
+			return {} as R; // Return empty object to prevent build failures
+		}
 
 		return fetch(
 			`${baseUrl}/${path}${deepPopulate}${currentPage !== undefined ? `&pagination[page]=${currentPage ?? 1}&pagination[pageSize]=${pageSize ?? 10}` : ''}${searchParams ? `&${searchParams}${sortParams ? `&${sortParams}` : ''}` : ''}${useTimeStamp ? `&timestamp=${timestamp}` : ''}`,
 			fetchParams
 		)
 			.then(handleResponse<R>)
-			.catch(handleError);
+			.catch((error) => {
+				// During build time, return empty object instead of failing
+				if (isBuildTime) {
+					console.warn(`API call failed during build: ${baseUrl}/${path}`, error);
+					return {} as R;
+				}
+				return handleError(error);
+			});
 	};
 
 	return {

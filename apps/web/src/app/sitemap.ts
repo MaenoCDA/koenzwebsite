@@ -7,16 +7,41 @@ const KIND_ENUM = {
 };
 
 const Sitemap = async () => {
-	const routes = await getFetchClient().routes('api/routes');
+	// Check if CMS URL is available
+	const { CMS_BASE_URL } = await import('~/config');
+	
+	// If CMS URL is not set to a real URL, return empty sitemap to avoid build errors
+	if (!CMS_BASE_URL || CMS_BASE_URL === 'http://localhost:1337' || CMS_BASE_URL.includes('your-cms-url')) {
+		console.warn('CMS URL not configured for build, skipping sitemap generation');
+		return [];
+	}
+
+	// Check if we're in build mode and CMS is localhost
+	const isBuildTime = process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_CMS_URL?.includes('localhost');
+	const isLocalhost = CMS_BASE_URL.includes('localhost') || CMS_BASE_URL.includes('127.0.0.1');
+	
+	if (isBuildTime && isLocalhost) {
+		console.warn('Skipping sitemap generation during build time with localhost CMS');
+		return [];
+	}
+
+	let routes;
+	try {
+		routes = await getFetchClient().routes('api/routes');
+	} catch (error) {
+		console.warn('Failed to fetch routes for sitemap:', error);
+		return [];
+	}
 
 	if (!routes) {
-		return {};
+		return [];
 	}
 
 	const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
 	if (!siteUrl) {
-		throw new Error('NEXT_PUBLIC_SITE_URL is not defined');
+		console.warn('NEXT_PUBLIC_SITE_URL is not defined, using default');
+		return [];
 	}
 
 	const entries = await Promise.all(

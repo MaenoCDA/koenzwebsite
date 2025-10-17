@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "buildCommand": "yarn build:cms:minimal",
+  "outputDirectory": "apps/cms/dist",
+  "installCommand": "yarn install",
+  "builds": [
+    {
+      "src": "apps/cms/server.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 60,
+        "runtime": "nodejs20.x"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "apps/cms/server.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

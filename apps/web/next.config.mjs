@@ -22,6 +22,13 @@ if (!process.env.NEXT_PUBLIC_CMS_URL) {
 		: 'http://localhost:1337';
 }
 
+// During build time, if CMS URL is localhost, disable static generation
+if (process.env.NODE_ENV === 'production' &&
+    process.env.NEXT_PUBLIC_CMS_URL?.includes('localhost')) {
+	console.warn('CMS URL is localhost during production build - disabling static generation');
+	process.env.DISABLE_STATIC_GENERATION = 'true';
+}
+
 const cspHeader = `
     frame-ancestors 'self' ${process.env.NEXT_PUBLIC_CMS_URL || 'http://localhost:1337'};
 `;
